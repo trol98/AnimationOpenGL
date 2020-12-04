@@ -14,7 +14,7 @@
 #include "OpenGLBufferLayout.h"
 #include "OpenGLVertexArray.h"
 
-
+//#include "Parser.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -108,6 +108,9 @@ int main()
 	unsigned int indices[] = {
 		0, 1, 2,
 	};
+
+	//Parser p;
+
 	std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
 	VAO->Bind();
 	OpenGLBufferLayout layout{ {ShaderDataType::Float3, "aPos"} };

@@ -32,7 +32,8 @@ project "AnimationOpenGL"
 
 
 	files
-	{
+	{	
+		"%{wks.location}/AnimationOpenGL/res/**.**",
 		"%{wks.location}/AnimationOpenGL/src/*.h",
 		"%{wks.location}/AnimationOpenGL/src/*.cpp",
 		"%{wks.location}/AnimationOpenGL/src/vendor/glm/glm/**.hpp",
@@ -75,9 +76,6 @@ group "Dependencies"
 	include "Dependencies/Glad"
 group ""
 
---include "TerrainGen"
---include "GLFW"
---include "premake"
---include "Glad"
+
 
 
