@@ -38,6 +38,8 @@ project "AnimationOpenGL"
 		"%{wks.location}/AnimationOpenGL/src/*.cpp",
 		"%{wks.location}/AnimationOpenGL/src/vendor/glm/glm/**.hpp",
 		"%{wks.location}/AnimationOpenGL/src/vendor/glm/glm/**.inl",
+		"%{wks.location}/AnimationOpenGL/src/vendor/stb_image/*.h",
+		"%{wks.location}/AnimationOpenGL/src/vendor/stb_image/*.cpp"
 	}
 
 	defines

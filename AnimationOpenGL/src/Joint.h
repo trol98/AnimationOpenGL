@@ -18,39 +18,13 @@ private:
 	glm::mat4 m_localBindTransform;
 	glm::mat4 m_inverseBindTransform;
 public:
-	Joint(int index, const std::string& name, glm::mat4 localBindTransform)
-		: Index(index), Name(name), m_localBindTransform(localBindTransform),
-		m_animatedTransform(), m_inverseBindTransform()
-	{}
+	Joint(int index, const std::string& name, glm::mat4 localBindTransform);
 
-	void addJoint(const Joint& joint)
-	{
-		Children.emplace_back(joint);
-	}
+	void addJoint(const Joint& joint);
+	void setAnimatedTransform(glm::mat4 animatedTransform) noexcept;
 
-	void setAnimatedTransform(glm::mat4 animatedTransform) noexcept
-	{
-		m_animatedTransform = animatedTransform;
-	}
-
-	glm::mat4 getAnimatedTransform() const noexcept
-	{
-		return m_animatedTransform;
-	}
-
-	glm::mat4 getinverseBindTransform() const noexcept
-	{
-		return m_inverseBindTransform;
-	}
+	glm::mat4 getAnimatedTransform() const noexcept;
+	glm::mat4 getinverseBindTransform() const noexcept;
 private:
-
-	void calcInverseBindTransform(glm::mat4 parentBindTransform) noexcept
-	{
-		glm::mat4 bindTransform = parentBindTransform * m_localBindTransform;
-		m_inverseBindTransform = glm::inverse(bindTransform);
-		for (auto& child : Children)
-		{
-			child.calcInverseBindTransform(bindTransform);
-		}
-	}
+	void calcInverseBindTransform(glm::mat4 parentBindTransform) noexcept;
 };
