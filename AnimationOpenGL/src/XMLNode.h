@@ -12,70 +12,23 @@ private:
 	std::string m_data;
 	std::unordered_map<std::string, std::vector<XMLNode>> m_childNodes;
 public:
-	XMLNode(const std::string& name)
-		:m_name(name)
-	{}
+	XMLNode(const std::string& name);
 
-	std::string getName() const
-	{
-		return m_name;
-	}
+	std::string getName() const;
 
-	std::string getData() const
-	{
-		return m_data;
-	}
+	std::string getData() const;
 
-	std::string getAttribute(const std::string& attrib) const
-	{
-		return m_attributes.at(attrib);
-	}
+	std::string getAttribute(const std::string& attrib) const;
 
-	XMLNode getChild(const std::string& childName) const 
-	{
-		const auto& nodes = m_childNodes.at(childName);
-		if (!nodes.empty())
-		{
-			return nodes[0];
-		}
-		return nullptr;
-	}
+	XMLNode getChild(const std::string& childName) const;
 
-	XMLNode getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const 
-	{
-		const auto& nodes = m_childNodes.at(childName);
-		if (nodes.empty())
-		{
-			return nullptr;
-		}
-		for (const auto& node : nodes)
-		{
-			if (node.getAttribute(attrib) == value)
-				return node;
-		}
-		return nullptr;
-	}
+	XMLNode getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const;
 
-	std::vector<XMLNode> getChildren(const std::string& name) const 
-	{
-		std::vector<XMLNode> children = m_childNodes.at(name);
-		if (!children.empty())
-			return children;
-		return std::vector<XMLNode>();
-	}
+	std::vector<XMLNode> getChildren(const std::string& name) const;
 
-	void addAttribute(const std::string& attrib, const std::string& value)
-	{
-		m_attributes[attrib] = value;
-	}
+	void addAttribute(const std::string& attrib, const std::string& value);
 
-	void addChild(XMLNode child)
-	{
-		m_childNodes.at(child.getName()).emplace_back(child);
-	}
+	void addChild(XMLNode child);
 
-	void setData(const std::string& data)
-	{
-		m_data = data;
-	}
+	void setData(const std::string& data);
 };
