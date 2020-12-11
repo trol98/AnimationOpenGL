@@ -12,23 +12,23 @@ void Joint::addJoint(const Joint& joint)
 	Children.emplace_back(joint);
 }
 
-void Joint::setAnimatedTransform(glm::mat4 animatedTransform) noexcept
+void Joint::setAnimatedTransform(glm::mat4 animatedTransform) 
 {
 	m_animatedTransform = animatedTransform;
 }
 
-glm::mat4 Joint::getAnimatedTransform() const noexcept
+glm::mat4 Joint::getAnimatedTransform() const 
 {
 	return m_animatedTransform;
 }
 
-glm::mat4 Joint::getinverseBindTransform() const noexcept
+glm::mat4 Joint::getinverseBindTransform() const
 {
 	return m_inverseBindTransform;
 }
 
 
-void Joint::calcInverseBindTransform(glm::mat4 parentBindTransform) noexcept
+void Joint::calcInverseBindTransform(glm::mat4 parentBindTransform)
 {
 	glm::mat4 bindTransform = parentBindTransform * m_localBindTransform;
 	m_inverseBindTransform = glm::inverse(bindTransform);

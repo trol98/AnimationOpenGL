@@ -21,10 +21,10 @@ public:
 	Joint(int index, const std::string& name, glm::mat4 localBindTransform);
 
 	void addJoint(const Joint& joint);
-	void setAnimatedTransform(glm::mat4 animatedTransform) noexcept;
+	void setAnimatedTransform(glm::mat4 animatedTransform);
 
-	glm::mat4 getAnimatedTransform() const noexcept;
-	glm::mat4 getinverseBindTransform() const noexcept;
+	glm::mat4 getAnimatedTransform() const;
+	glm::mat4 getinverseBindTransform() const;
 private:
-	void calcInverseBindTransform(glm::mat4 parentBindTransform) noexcept;
+	void calcInverseBindTransform(glm::mat4 parentBindTransform);
 };

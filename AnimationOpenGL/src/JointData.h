@@ -7,9 +7,9 @@
 class JointData
 {
 public:
-	int index;
-	std::string nameID;
-	glm::mat4 bindLocalTransform;
+	const int index;
+	const std::string nameID;
+	const glm::mat4 bindLocalTransform;
 
 	std::vector<JointData> children;
 

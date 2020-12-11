@@ -11,5 +11,5 @@ private:
 	glm::quat m_rotation;
 public:
 	JointTransform(glm::vec3 position, glm::quat rotation);
-	glm::mat4 getLocalTransform();
+	glm::mat4 getLocalTransform() const;
 };

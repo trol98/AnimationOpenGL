@@ -4,8 +4,12 @@
 
 class SkeletonData
 {
-	JointData headJoint;
-	int jointCount;
+public:
+	const JointData headJoint;
+	const int jointCount;
 
-	SkeletonData(const JointData& headJoint, int jointCount);
+	SkeletonData(const JointData& headJoint, int jointCount)
+		:headJoint(headJoint), jointCount(jointCount)
+	{
+	}
 };
