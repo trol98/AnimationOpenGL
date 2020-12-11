@@ -1,5 +1,7 @@
 #include "VertexSkinData.h"
 
+#include <algorithm> 
+
 void VertexSkinData::addJointEffect(int jointID, float weight)
 {
 	for (int i = 0; i < weights.size(); i++) 
@@ -19,9 +21,10 @@ void VertexSkinData::limitJointNumber(int max)
 	if (jointIDs.size() > max) 
 	{
 		float* topWeights = new float[max];
-		float total = saveTopWeights(topWeights);
-		refillWeightList(topWeights, total);
-		removeExcessJointIds(max);
+		float total = saveTopWeights(topWeights, max);
+		refillWeightList(topWeights, max, total);
+		removeExcessJointIDs(max);
+		delete[] topWeights;
 	}
 	else if (jointIDs.size() < max) 
 	{
@@ -29,10 +32,35 @@ void VertexSkinData::limitJointNumber(int max)
 	}
 }
 void VertexSkinData::fillEmptyWeights(int max)
-{}
-float VertexSkinData::saveTopWeights(std::vector<float>& topWeightsArray)
-{}
-void VertexSkinData::refillWeightList(const std::vector<float>& topWeights, float total)
-{}
-void VertexSkinData::removeExcessJointIds(int max)
-{}
+{
+	while (jointIDs.size() < max) 
+	{
+		jointIDs.emplace_back(0);
+		weights.emplace_back(0.0f);
+	}
+}
+float VertexSkinData::saveTopWeights(float* topWeightsArray, int maxLength)
+{
+	float total = 0;
+	for (int i = 0; i < maxLength; i++) 
+	{
+		topWeightsArray[i] = weights[i];
+		total += topWeightsArray[i];
+	}
+	return total;
+}
+void VertexSkinData::refillWeightList(float* topWeights, int maxLength, float total)
+{
+	weights.clear();
+	for (int i = 0; i < maxLength; i++) 
+	{
+		weights.emplace_back(std::min(topWeights[i] / total, 1.0f));
+	}
+}
+void VertexSkinData::removeExcessJointIDs(int max)
+{
+	while (jointIDs.size() > max) 
+	{
+		jointIDs.pop_back();
+	}
+}

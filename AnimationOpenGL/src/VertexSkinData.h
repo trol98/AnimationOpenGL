@@ -12,7 +12,7 @@ public:
 	void limitJointNumber(int max);
 private:
 	void fillEmptyWeights(int max);
-	float saveTopWeights(std::vector<float>& topWeightsArray);
-	void refillWeightList(const std::vector<float>& topWeights, float total);
-	void removeExcessJointIds(int max);
+	float saveTopWeights(float* topWeightsArray, int topWeightsArrayLength);
+	void refillWeightList(float* topWeights, int topWeightsLength, float total);
+	void removeExcessJointIDs(int max);
 };
