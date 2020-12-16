@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <regex>
 #include <string>
 
 #include "XMLNode.h"
@@ -14,25 +14,28 @@ private:
 	static void addData(const std::string& line, XMLNode& node);
 	static void addAttributes(const std::string& titleParts, XMLNode& node);
 	static void addAttribute(const std::string& attributeLine, XMLNode& node);
-	static std::string& getStartTag(const std::string& line);
+	static std::string getStartTag(const std::string& line);
 private:
-	static const std::string DATA;
-	static const std::string START_TAG;
-	static const std::string ATTR_NAME;
-	static const std::string ATTR_VAL;
-	static const std::string CLOSED;
+	static const std::regex DATA;
+	static const std::regex START_TAG;
+	static const std::regex ATTR_NAME;
+	static const std::regex ATTR_VAL;
+	static const std::regex CLOSED;
 private:
-	static std::string WHITESPACE;
+	static const std::string WHITESPACE;
 
 	static std::string ltrim(const std::string& s);
 	static std::string rtrim(const std::string& s);
 	static std::string trim(const std::string& s);
+
+	static std::vector<std::string> split(const std::string& s);
 };
 
-std::string DATA = R"(>(.+?)<)";
-std::string START_TAG = R"(<(.+?)>)";
-std::string ATTR_NAME = R"((.+?)=)";
-std::string ATTR_VAL = R"(\"(.+?)\")";
-std::string CLOSED = R"((</|/>))";
+const std::regex XMLParser::DATA			(R"(>(.+?)<)");
+const std::regex XMLParser::START_TAG		(R"(<(.+?)>)");
+const std::regex XMLParser::ATTR_NAME		(R"((.+?)=)");
+const std::regex XMLParser::ATTR_VAL		(R"(\"(.+?)\")");
+const std::regex XMLParser::CLOSED			(R"((</|/>))");
 
-std::string XMLParser::WHITESPACE = " \n\r\t\f\v";
+
+const std::string XMLParser::WHITESPACE = " \n\r\t\f\v";
