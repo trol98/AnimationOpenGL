@@ -28,6 +28,8 @@ private:
 	static std::string rtrim(const std::string& s);
 	static std::string trim(const std::string& s);
 
+	static std::string replace(const std::string& s, char oldChar, char newChar);
+
 	static std::vector<std::string> split(const std::string& s);
 };
 

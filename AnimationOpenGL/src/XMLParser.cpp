@@ -52,6 +52,8 @@ XMLNode XMLParser::loadNode(std::ifstream& file)
 	// spliting by space
 	std::vector<std::string> startTagParts = split(getStartTag(line));
 
+	XMLNode * node = new XMLNode(startTagParts[0])
+
 
 }
 void XMLParser::addData(const std::string& line, XMLNode& node)
@@ -92,6 +94,18 @@ std::string XMLParser::rtrim(const std::string& s)
 std::string XMLParser::trim(const std::string& s)
 {
 	return rtrim(ltrim(s));
+}
+
+std::string XMLNode::replace(const std::string& s, char oldChar, char newChar)
+{
+	if (oldChar != newChar)
+	{
+
+	}
+	else
+	{
+		return s;
+	}
 }
 
 std::vector<std::string> XMLParser::split(const std::string& s)
