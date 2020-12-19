@@ -14,7 +14,7 @@
 #include "OpenGLBufferLayout.h"
 #include "OpenGLVertexArray.h"
 
-//#include "Parser.h"
+#include "XMLParser.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -145,6 +145,7 @@ int main()
 
 	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
 
+	XMLNode* node = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 
 	// configure global opengl state
 	// -----------------------------

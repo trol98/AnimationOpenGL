@@ -8,13 +8,14 @@
 class XMLParser
 {
 public:
-	static XMLNode loadXMLFile(const std::string& path);
+	static XMLNode* loadXMLFile(const std::string& path);
 private:
-	static XMLNode loadNode(std::ifstream& file);
-	static void addData(const std::string& line, XMLNode& node);
-	static void addAttributes(const std::string& titleParts, XMLNode& node);
-	static void addAttribute(const std::string& attributeLine, XMLNode& node);
+	static XMLNode* loadNode(std::ifstream& file);
+	static void addData(const std::string& line, XMLNode* node);
+	static void addAttributes(const std::vector<std::string>& titleParts, XMLNode* node);
+	static void addAttribute(const std::string& attributeLine, XMLNode* node);
 	static std::string getStartTag(const std::string& line);
+	static bool checkClosedTag(const std::string& line);
 private:
 	static const std::regex DATA;
 	static const std::regex START_TAG;
@@ -27,17 +28,9 @@ private:
 	static std::string ltrim(const std::string& s);
 	static std::string rtrim(const std::string& s);
 	static std::string trim(const std::string& s);
-
-	static std::string replace(const std::string& s, char oldChar, char newChar);
+	static std::string remove(const std::string& s, char oldChar);
+	static bool contains(const std::string& s, char ch);
 
 	static std::vector<std::string> split(const std::string& s);
 };
 
-const std::regex XMLParser::DATA			(R"(>(.+?)<)");
-const std::regex XMLParser::START_TAG		(R"(<(.+?)>)");
-const std::regex XMLParser::ATTR_NAME		(R"((.+?)=)");
-const std::regex XMLParser::ATTR_VAL		(R"(\"(.+?)\")");
-const std::regex XMLParser::CLOSED			(R"((</|/>))");
-
-
-const std::string XMLParser::WHITESPACE = " \n\r\t\f\v";
