@@ -8,11 +8,12 @@ class XMLNode
 {
 private:
 	std::string m_name;
-	std::unordered_map<std::string, std::string> m_attributes;
 	std::string m_data;
-	std::unordered_map<std::string, std::vector<XMLNode>> m_childNodes;
+	std::unordered_map<std::string, std::string>* m_attributes;
+	std::unordered_map<std::string, std::vector<XMLNode>* >* m_childNodes;
 public:
 	XMLNode(const std::string& name);
+	~XMLNode();
 
 	std::string getName() const;
 
