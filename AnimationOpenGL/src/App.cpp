@@ -146,7 +146,7 @@ int main()
 	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
 
 	XMLNode* node = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
-
+	delete node;
 	// configure global opengl state
 	// -----------------------------
 

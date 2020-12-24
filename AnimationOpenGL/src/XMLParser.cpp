@@ -17,7 +17,7 @@ const std::regex XMLParser::CLOSED(R"((</|/>))");
 
 const std::string XMLParser::WHITESPACE = " \n\r\t\f\v";
 
-XMLNode XMLParser::loadXMLFile(const std::string& path)
+XMLNode* XMLParser::loadXMLFile(const std::string& path)
 {
 	std::ifstream file(path);
 	
@@ -29,7 +29,7 @@ XMLNode XMLParser::loadXMLFile(const std::string& path)
 
 	file.exceptions(std::ios::badbit | std::ios::eofbit | std::ios::failbit);
 
-	XMLNode node = nullptr;
+	XMLNode* node = nullptr;
 
 	try
 	{
@@ -45,7 +45,7 @@ XMLNode XMLParser::loadXMLFile(const std::string& path)
 	file.close();
 	return node;
 }
-XMLNode XMLParser::loadNode(std::ifstream& file)
+XMLNode* XMLParser::loadNode(std::ifstream& file)
 {
 	
 	std::string line;
@@ -61,7 +61,7 @@ XMLNode XMLParser::loadNode(std::ifstream& file)
 	// spliting by space
 	std::vector<std::string> startTagParts = split(getStartTag(line));
 
-	XMLNode node(remove(startTagParts[0], '/'));
+	XMLNode* node = new XMLNode(remove(startTagParts[0], '/'));
 	addAttributes(startTagParts, node);
 	addData(line, node);
 
@@ -69,47 +69,47 @@ XMLNode XMLParser::loadNode(std::ifstream& file)
 	{
 		return node;
 	}
-	XMLNode child = nullptr;
+	XMLNode* child = nullptr;
 	while ((child = loadNode(file)) != nullptr)
 	{
-		node.addChild(child);
+		node->addChild(child);
 	}
 	return node;
 }
-void XMLParser::addData(const std::string& line, XMLNode node)
+void XMLParser::addData(const std::string& line, XMLNode* node)
 {
 	std::smatch matches;
 	std::regex_search(line, matches, DATA);
 	if (!matches.empty())
 	{
-		node.setData(matches.str(1));
+		node->setData(matches.str(1));
 	}
 }
-void XMLParser::addAttributes(const std::vector<std::string>& titleParts, XMLNode node)
+void XMLParser::addAttributes(const std::vector<std::string>& titleParts, XMLNode* node)
 {
 	std::smatch nameMatch, valMatch;
 	for (size_t i = 1; i < titleParts.size(); i++) 
 	{
 			if (contains(titleParts[i],'=')) 
 			{
-				// TODO: check if reseting smatch objects is needed
+				// TODO: check if resetting smatch objects is needed
 
 				std::regex_search(titleParts[i], nameMatch, ATTR_NAME);
 				std::regex_search(titleParts[i], valMatch, ATTR_VAL);
 
-				node.addAttribute(nameMatch.str(1), valMatch.str(1));
+				node->addAttribute(nameMatch.str(1), valMatch.str(1));
 			}
 	}
 }
-void XMLParser::addAttribute(const std::string& attributeLine, XMLNode node)
+void XMLParser::addAttribute(const std::string& attributeLine, XMLNode* node)
 {
 	// NOTE: This method is currently not used anywhere
 	std::smatch nameMatch, valMatch;
 
 	std::regex_search(attributeLine, nameMatch, ATTR_NAME);
 	std::regex_search(attributeLine, valMatch, ATTR_VAL);
-
-	node.addAttribute(nameMatch.str(1), valMatch.str(1));
+		
+	node->addAttribute(nameMatch.str(1), valMatch.str(1));
 }
 
 std::string XMLParser::getStartTag(const std::string& line)

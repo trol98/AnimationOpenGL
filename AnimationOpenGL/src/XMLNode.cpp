@@ -4,13 +4,20 @@
 #include <string>
 
 XMLNode::XMLNode(const std::string& name)
-	:m_name(name)
+	:m_name(name), m_childNodes(nullptr), m_attributes(nullptr)
 {}
 
 XMLNode::~XMLNode()
 {
-	delete m_attributes;
+	if (m_childNodes != nullptr)
+	{
+		for (const auto& elem : *m_childNodes)
+		{
+			delete elem.second;
+		}
+	}
 	delete m_childNodes;
+	delete m_attributes;
 
 	m_attributes = nullptr;
 	m_childNodes = nullptr;
@@ -45,7 +52,7 @@ XMLNode* XMLNode::getChild(const std::string& childName) const
 	if (m_childNodes != nullptr) 
 	{
 		const auto nodes = m_childNodes->at(childName);
-		if (nodes != nullptr && !nodes->empty()) 
+		if ((nodes != nullptr) && (!nodes->empty()))
 		{
 			return &nodes->at(0);
 		}
@@ -64,13 +71,14 @@ XMLNode* XMLNode::getChildWithAttribute(const std::string& childName, const std:
 		std::string val = child.getAttribute(attrib);
 		if (value == val) 
 		{
+			// TODO: Examine this part, returning address to a local variable
 			return &child;
 		}
 	}
 	return nullptr;
 }
 
-std::vector<XMLNode> XMLNode::getChildren(const std::string& name) const
+std::vector<XMLNode>* XMLNode::getChildren(const std::string& name) const
 {
 	std::vector<XMLNode>* children = m_childNodes->at(name);
 	if (!children->empty())
@@ -86,10 +94,12 @@ void XMLNode::addAttribute(const std::string& attrib, const std::string& value)
 	{
 		m_attributes = new std::unordered_map<std::string, std::string>();
 	}
+
+	//TODO: check for case if that attribute doesn't exist
 	m_attributes->at(attrib) = value;
 }
 
 void XMLNode::addChild(XMLNode* child)
 {
-	m_childNodes.at(child->getName())->emplace_back(child);
+	(m_childNodes->at(child->getName()))->emplace_back(*child);
 }
