@@ -31,6 +31,6 @@ private:
 	static std::string remove(const std::string& s, char oldChar);
 	static bool contains(const std::string& s, char ch);
 
-	static std::vector<std::string> split(const std::string& s);
+	static std::vector<std::string> split(const std::string& s, char splitCharacter);
 };
 

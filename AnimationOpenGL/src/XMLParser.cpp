@@ -50,7 +50,7 @@ XMLNode* XMLParser::loadNode(std::ifstream& file)
 	
 	std::string line;
 	std::getline(file, line);
-	trim(line);
+	line = trim(line);
 	
 
 	if (line.rfind(R"(</)", 0) == 0) 
@@ -59,7 +59,7 @@ XMLNode* XMLParser::loadNode(std::ifstream& file)
 	}
 
 	// spliting by space
-	std::vector<std::string> startTagParts = split(getStartTag(line));
+	std::vector<std::string> startTagParts = split(getStartTag(line), ' ');
 
 	XMLNode* node = new XMLNode(remove(startTagParts[0], '/'));
 	addAttributes(startTagParts, node);
@@ -92,7 +92,7 @@ void XMLParser::addAttributes(const std::vector<std::string>& titleParts, XMLNod
 	{
 			if (contains(titleParts[i],'=')) 
 			{
-				// TODO: check if resetting smatch objects is needed
+				// NOTE: resetting the state of smatch objects is not needed
 
 				std::regex_search(titleParts[i], nameMatch, ATTR_NAME);
 				std::regex_search(titleParts[i], valMatch, ATTR_VAL);
@@ -122,8 +122,7 @@ std::string XMLParser::getStartTag(const std::string& line)
 bool XMLParser::checkClosedTag(const std::string& line)
 {
 	std::smatch matches;
-	std::regex_search(line, matches, CLOSED);
-	return matches.ready();
+	return std::regex_search(line, matches, CLOSED);
 }
 
 
@@ -153,15 +152,14 @@ std::string XMLParser::remove(const std::string& s, char oldChar)
 	return temp;
 }
 
-std::vector<std::string> XMLParser::split(const std::string& s)
+std::vector<std::string> XMLParser::split(const std::string& s, char splitCharacter)
 {
 	std::istringstream ss(s);
 	std::vector<std::string> output;
 
 	std::string substring;
-	while (ss)
+	while (getline(ss, substring, splitCharacter))
 	{
-		ss >> substring;
 		output.emplace_back(substring);
 	}
 

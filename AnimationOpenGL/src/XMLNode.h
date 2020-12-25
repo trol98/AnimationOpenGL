@@ -32,4 +32,9 @@ public:
 	void addChild(XMLNode* child);
 
 	void setData(const std::string& data);
+
+	// DEBUG ONLY
+
+	std::unordered_map<std::string, std::string>* get_attributes();
+	std::unordered_map<std::string, std::vector<XMLNode>*>* get_children();
 };

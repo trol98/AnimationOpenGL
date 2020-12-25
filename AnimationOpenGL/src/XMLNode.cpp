@@ -66,13 +66,25 @@ XMLNode* XMLNode::getChildWithAttribute(const std::string& childName, const std:
 	if (children == nullptr || children->empty()) {
 		return nullptr;
 	}
+
+	/*
 	for (XMLNode child : *children) 
 	{
 		std::string val = child.getAttribute(attrib);
 		if (value == val) 
 		{
-			// TODO: Examine this part, returning address to a local variable
 			return &child;
+		}
+	}
+	*/
+
+	for (size_t i = 0; i < children->size(); i++)
+	{
+		std::string val = children->at(i).getAttribute(attrib);
+		if (value == val)
+		{
+			// TODO: Examine this part, returning address to a local variable
+			return &children->at(i);
 		}
 	}
 	return nullptr;
@@ -95,11 +107,28 @@ void XMLNode::addAttribute(const std::string& attrib, const std::string& value)
 		m_attributes = new std::unordered_map<std::string, std::string>();
 	}
 
-	//TODO: check for case if that attribute doesn't exist
-	m_attributes->at(attrib) = value;
+	m_attributes->emplace(std::make_pair(attrib, value));
 }
 
 void XMLNode::addChild(XMLNode* child)
 {
+	if (m_childNodes == nullptr)
+	{
+		m_childNodes = new std::unordered_map<std::string, std::vector<XMLNode>*>();
+	}
+	// TODO: change this code to emplace a new pair and allocate memory
+	// Check deconstructor
 	(m_childNodes->at(child->getName()))->emplace_back(*child);
+}
+
+
+// DEBUG ONLY
+
+std::unordered_map<std::string, std::string>* XMLNode::get_attributes()
+{
+	return m_attributes;
+}
+std::unordered_map<std::string, std::vector<XMLNode>*>* XMLNode::get_children()
+{
+	return m_childNodes;
 }

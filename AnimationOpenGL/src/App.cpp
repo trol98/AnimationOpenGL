@@ -146,6 +146,11 @@ int main()
 	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
 
 	XMLNode* node = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+
+	for (const auto& elem : *node->get_children())
+	{
+		std::cout << elem.first << std::endl;
+	}
 	delete node;
 	// configure global opengl state
 	// -----------------------------
@@ -199,6 +204,7 @@ int main()
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glfwTerminate();
+
 	
 	return 0;
 }
