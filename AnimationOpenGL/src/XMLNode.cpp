@@ -116,9 +116,15 @@ void XMLNode::addChild(XMLNode* child)
 	{
 		m_childNodes = new std::unordered_map<std::string, std::vector<XMLNode>*>();
 	}
+
+	if (m_childNodes->find(child->getName()) == m_childNodes->end())
+	{
+		m_childNodes->emplace(std::make_pair(child->getName(), new std::vector<XMLNode>()));
+	}
+
+	(m_childNodes->at(child->getName()))->emplace_back(child);
 	// TODO: change this code to emplace a new pair and allocate memory
 	// Check deconstructor
-	(m_childNodes->at(child->getName()))->emplace_back(*child);
 }
 
 

@@ -62,6 +62,9 @@ XMLNode* XMLParser::loadNode(std::ifstream& file)
 	std::vector<std::string> startTagParts = split(getStartTag(line), ' ');
 
 	XMLNode* node = new XMLNode(remove(startTagParts[0], '/'));
+	
+	std::cout << node->getName() << std::endl; // ONLY FOR DEBUGGING
+
 	addAttributes(startTagParts, node);
 	addData(line, node);
 

@@ -147,6 +147,10 @@ int main()
 
 	XMLNode* node = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 
+	//TODO: Check if XMLNode doesn't need copy/move constructor/=operator
+	//TODO: Change to std::vector<XMLNode*>*
+
+
 	for (const auto& elem : *node->get_children())
 	{
 		std::cout << elem.first << std::endl;
