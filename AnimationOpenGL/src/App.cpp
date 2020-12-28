@@ -147,7 +147,7 @@ int main()
 
 	XMLNode* node = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 
-	//TODO: Check if XMLNode doesn't need copy/move constructor/=operator
+	//TODO: Check if XMLNode does need copy/move constructor/=operator
 	//TODO: Change to std::vector<XMLNode*>*
 
 

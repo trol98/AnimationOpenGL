@@ -23,6 +23,25 @@ XMLNode::~XMLNode()
 	m_childNodes = nullptr;
 }
 
+XMLNode::XMLNode(const XMLNode& other)
+	:m_name(other.m_name),
+	 m_data(other.m_data)
+{
+	m_attributes = new std::unordered_map<std::string, std::string>;
+	for (const auto& elem : *other.m_attributes)
+	{
+		this->m_attributes->emplace(elem);
+	}
+
+	m_childNodes = new std::unordered_map<std::string, std::vector<XMLNode>* >;
+	// TODO: finish this method
+}
+
+XMLNode& XMLNode::operator=(const XMLNode& other)
+{
+	// TODO: insert return statement here
+}
+
 std::string XMLNode::getName() const
 {
 	return m_name;

@@ -14,6 +14,8 @@ private:
 public:
 	XMLNode(const std::string& name);
 	~XMLNode();
+	XMLNode(const XMLNode& other);
+	XMLNode& operator=(const XMLNode& other);
 
 	std::string getName() const;
 
