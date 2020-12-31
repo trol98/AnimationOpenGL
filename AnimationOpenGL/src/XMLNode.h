@@ -3,14 +3,15 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 
 class XMLNode
 {
 private:
 	std::string m_name;
 	std::string m_data;
-	std::unordered_map<std::string, std::string>* m_attributes;
-	std::unordered_map<std::string, std::vector<XMLNode>*>* m_childNodes;
+	std::unique_ptr<std::unordered_map<std::string, std::string>> m_attributes;
+	std::unique_ptr<std::unordered_map<std::string, std::unique_ptr<std::vector<XMLNode>>>> m_childNodes;
 public:
 	XMLNode(const std::string& name);
 	~XMLNode();
@@ -23,20 +24,20 @@ public:
 
 	std::string getAttribute(const std::string& attrib) const;
 
-	XMLNode* getChild(const std::string& childName) const;
+	std::unique_ptr<XMLNode> getChild(const std::string& childName) const;
 
-	XMLNode* getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const;
+	std::unique_ptr<XMLNode> getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const;
 
-	std::vector<XMLNode>* getChildren(const std::string& name) const;
+	std::unique_ptr<std::vector<XMLNode>> getChildren(const std::string& name) const;
 
 	void addAttribute(const std::string& attrib, const std::string& value);
 
-	void addChild(XMLNode* child);
+	void addChild(std::unique_ptr<XMLNode>& child);
 
 	void setData(const std::string& data);
 
-	// DEBUG ONLY
+	// FOR DEBUG ONLY
 
-	std::unordered_map<std::string, std::string>* get_attributes();
-	std::unordered_map<std::string, std::vector<XMLNode>*>* get_children();
+	std::unique_ptr<std::unordered_map<std::string, std::string>>& get_attributes();
+	std::unique_ptr<std::unordered_map<std::string, std::unique_ptr<std::vector<XMLNode>>>>& get_children();
 };

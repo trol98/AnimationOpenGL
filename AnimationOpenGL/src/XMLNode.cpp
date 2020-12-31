@@ -9,16 +9,6 @@ XMLNode::XMLNode(const std::string& name)
 
 XMLNode::~XMLNode()
 {
-	if (m_childNodes != nullptr)
-	{
-		for (const auto& elem : *m_childNodes)
-		{
-			delete elem.second;
-		}
-	}
-	delete m_childNodes;
-	delete m_attributes;
-
 	m_attributes = nullptr;
 	m_childNodes = nullptr;
 }
@@ -27,17 +17,17 @@ XMLNode::XMLNode(const XMLNode& other)
 	:m_name(other.m_name),
 	 m_data(other.m_data)
 {
-	m_attributes = new std::unordered_map<std::string, std::string>;
+	m_attributes = std::make_unique<std::unordered_map<std::string, std::string>>();
 	for (const auto& elem : *other.m_attributes)
 	{
 		this->m_attributes->emplace(elem);
 	}
 
-	m_childNodes = new std::unordered_map<std::string, std::vector<XMLNode>* >;
+	m_childNodes = std::make_unique<std::unordered_map<std::string, std::unique_ptr<std::vector<XMLNode>>>>();
 	for (const auto& elem : *other.m_childNodes)
 	{
-		this->m_childNodes->emplace(std::make_pair(elem.first, new std::vector<XMLNode>()));
-		this->m_childNodes->at(elem.first) = elem.second;
+		this->m_childNodes->emplace(std::make_pair(elem.first, std::make_unique<std::vector<XMLNode>>()));
+		this->m_childNodes->at(elem.first)->data = elem.second;
 	}
 }
 
@@ -100,7 +90,7 @@ std::string XMLNode::getAttribute(const std::string& attrib) const
 	return nullptr;
 }
 
-XMLNode* XMLNode::getChild(const std::string& childName) const
+std::unique_ptr<XMLNode> XMLNode::getChild(const std::string& childName) const
 {
 	if (m_childNodes != nullptr) 
 	{
@@ -113,7 +103,7 @@ XMLNode* XMLNode::getChild(const std::string& childName) const
 	return nullptr;
 }
 
-XMLNode* XMLNode::getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const
+std::unique_ptr<XMLNode> XMLNode::getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const
 {
 	const auto children = getChildren(childName);
 	if (children == nullptr || children->empty()) {
@@ -163,7 +153,7 @@ void XMLNode::addAttribute(const std::string& attrib, const std::string& value)
 	m_attributes->emplace(std::make_pair(attrib, value));
 }
 
-void XMLNode::addChild(XMLNode* child)
+void XMLNode::addChild(std::unique_ptr<XMLNode>& child)
 {
 	if (m_childNodes == nullptr)
 	{
@@ -183,11 +173,11 @@ void XMLNode::addChild(XMLNode* child)
 
 // DEBUG ONLY
 
-std::unordered_map<std::string, std::string>* XMLNode::get_attributes()
+std::unique_ptr<std::unordered_map<std::string, std::string>>& XMLNode::get_attributes()
 {
 	return m_attributes;
 }
-std::unordered_map<std::string, std::vector<XMLNode>*>* XMLNode::get_children()
+std::unique_ptr<std::unordered_map<std::string, std::unique_ptr<std::vector<XMLNode>>>>& XMLNode::get_children()
 {
 	return m_childNodes;
 }
