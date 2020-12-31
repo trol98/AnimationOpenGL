@@ -34,12 +34,46 @@ XMLNode::XMLNode(const XMLNode& other)
 	}
 
 	m_childNodes = new std::unordered_map<std::string, std::vector<XMLNode>* >;
-	// TODO: finish this method
+	for (const auto& elem : *other.m_childNodes)
+	{
+		this->m_childNodes->emplace(std::make_pair(elem.first, new std::vector<XMLNode>()));
+		this->m_childNodes->at(elem.first) = elem.second;
+	}
 }
 
 XMLNode& XMLNode::operator=(const XMLNode& other)
 {
-	// TODO: insert return statement here
+	// check for self-assignment
+	if (&other == this)
+		return *this;
+
+	m_name = other.m_name;
+	m_data = other.m_data;
+
+	if (m_childNodes != nullptr)
+	{
+		for (const auto& elem : *m_childNodes)
+		{
+			delete elem.second;
+		}
+	}
+	delete m_childNodes;
+	delete m_attributes;
+
+	m_attributes = new std::unordered_map<std::string, std::string>;
+	for (const auto& elem : *other.m_attributes)
+	{
+		this->m_attributes->emplace(elem);
+	}
+
+	m_childNodes = new std::unordered_map<std::string, std::vector<XMLNode>* >;
+	for (const auto& elem : *other.m_childNodes)
+	{
+		this->m_childNodes->emplace(std::make_pair(elem.first, new std::vector<XMLNode>()));
+		this->m_childNodes->at(elem.first) = elem.second;
+	}
+
+	return *this;
 }
 
 std::string XMLNode::getName() const
