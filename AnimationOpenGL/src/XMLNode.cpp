@@ -90,24 +90,24 @@ std::string XMLNode::getAttribute(const std::string& attrib) const
 	return nullptr;
 }
 
-std::unique_ptr<XMLNode> XMLNode::getChild(const std::string& childName) const
+std::unique_ptr<XMLNode>& XMLNode::getChild(const std::string& childName) const
 {
 	if (m_childNodes != nullptr) 
 	{
-		const auto nodes = m_childNodes->at(childName);
+		auto& nodes = m_childNodes->at(childName);
 		if ((nodes != nullptr) && (!nodes->empty()))
 		{
-			return &nodes->at(0);
+			return nodes->at(0);
 		}
 	}
-	return nullptr;
+	return std::unique_ptr<XMLNode>(nullptr);
 }
 
-std::unique_ptr<XMLNode> XMLNode::getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const
+std::unique_ptr<XMLNode>& XMLNode::getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const
 {
-	const auto children = getChildren(childName);
+	const auto& children = getChildren(childName);
 	if (children == nullptr || children->empty()) {
-		return nullptr;
+		return std::unique_ptr<XMLNode>(nullptr);
 	}
 
 	/*
@@ -130,17 +130,17 @@ std::unique_ptr<XMLNode> XMLNode::getChildWithAttribute(const std::string& child
 			return &children->at(i);
 		}
 	}
-	return nullptr;
+	return std::unique_ptr<XMLNode>(nullptr);
 }
 
-std::vector<XMLNode>* XMLNode::getChildren(const std::string& name) const
+std::unique_ptr<XMLNode>& XMLNode::getChildren(const std::string& name) const
 {
 	std::vector<XMLNode>* children = m_childNodes->at(name);
 	if (!children->empty())
 	{
 		return m_childNodes->at(name);
 	}
-	return nullptr;
+	return std::unique_ptr<XMLNode>(nullptr);
 }
 
 void XMLNode::addAttribute(const std::string& attrib, const std::string& value)

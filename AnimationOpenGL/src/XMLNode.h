@@ -24,11 +24,11 @@ public:
 
 	std::string getAttribute(const std::string& attrib) const;
 
-	std::unique_ptr<XMLNode> getChild(const std::string& childName) const;
+	std::unique_ptr<XMLNode>& getChild(const std::string& childName) const;
 
-	std::unique_ptr<XMLNode> getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const;
+	std::unique_ptr<XMLNode>& getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const;
 
-	std::unique_ptr<std::vector<XMLNode>> getChildren(const std::string& name) const;
+	std::unique_ptr<std::vector<XMLNode>>& getChildren(const std::string& name) const;
 
 	void addAttribute(const std::string& attrib, const std::string& value);
 
