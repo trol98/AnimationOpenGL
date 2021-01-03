@@ -17,19 +17,19 @@ const std::regex XMLParser::CLOSED(R"((</|/>))");
 
 const std::string XMLParser::WHITESPACE = " \n\r\t\f\v";
 
-XMLNode* XMLParser::loadXMLFile(const std::string& path)
+std::shared_ptr<XMLNode>& XMLParser::loadXMLFile(const std::string& path)
 {
 	std::ifstream file(path);
 	
 	if (!file)
 	{
 		std::cout << "Can't find the XML file: " << path << '\n';
-		return nullptr;
+		return std::shared_ptr<XMLNode>(nullptr);
 	}
 
 	file.exceptions(std::ios::badbit | std::ios::eofbit | std::ios::failbit);
 
-	XMLNode* node = nullptr;
+	std::shared_ptr<XMLNode> node = nullptr;
 
 	try
 	{
@@ -45,7 +45,7 @@ XMLNode* XMLParser::loadXMLFile(const std::string& path)
 	file.close();
 	return node;
 }
-XMLNode* XMLParser::loadNode(std::ifstream& file)
+std::shared_ptr<XMLNode>& XMLParser::loadNode(std::ifstream& file)
 {
 	
 	std::string line;
@@ -55,13 +55,13 @@ XMLNode* XMLParser::loadNode(std::ifstream& file)
 
 	if (line.rfind(R"(</)", 0) == 0) 
 	{
-		return nullptr;
+		return std::shared_ptr<XMLNode>(nullptr);
 	}
 
 	// spliting by space
 	std::vector<std::string> startTagParts = split(getStartTag(line), ' ');
 
-	XMLNode* node = new XMLNode(remove(startTagParts[0], '/'));
+	std::shared_ptr<XMLNode> node = std::make_shared<XMLNode>(remove(startTagParts[0], '/'));
 	
 	std::cout << node->getName() << std::endl; // ONLY FOR DEBUGGING
 
@@ -72,14 +72,14 @@ XMLNode* XMLParser::loadNode(std::ifstream& file)
 	{
 		return node;
 	}
-	XMLNode* child = nullptr;
+	std::shared_ptr<XMLNode> child = nullptr;
 	while ((child = loadNode(file)) != nullptr)
 	{
 		node->addChild(child);
 	}
 	return node;
 }
-void XMLParser::addData(const std::string& line, XMLNode* node)
+void XMLParser::addData(const std::string& line, std::shared_ptr<XMLNode>& node)
 {
 	std::smatch matches;
 	std::regex_search(line, matches, DATA);
@@ -88,7 +88,7 @@ void XMLParser::addData(const std::string& line, XMLNode* node)
 		node->setData(matches.str(1));
 	}
 }
-void XMLParser::addAttributes(const std::vector<std::string>& titleParts, XMLNode* node)
+void XMLParser::addAttributes(const std::vector<std::string>& titleParts, std::shared_ptr<XMLNode>& node)
 {
 	std::smatch nameMatch, valMatch;
 	for (size_t i = 1; i < titleParts.size(); i++) 
@@ -104,7 +104,7 @@ void XMLParser::addAttributes(const std::vector<std::string>& titleParts, XMLNod
 			}
 	}
 }
-void XMLParser::addAttribute(const std::string& attributeLine, XMLNode* node)
+void XMLParser::addAttribute(const std::string& attributeLine, std::shared_ptr<XMLNode>& node)
 {
 	// NOTE: This method is currently not used anywhere
 	std::smatch nameMatch, valMatch;

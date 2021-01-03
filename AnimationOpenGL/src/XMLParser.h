@@ -8,12 +8,12 @@
 class XMLParser
 {
 public:
-	static XMLNode* loadXMLFile(const std::string& path);
+	static std::shared_ptr<XMLNode>& loadXMLFile(const std::string& path);
 private:
-	static XMLNode* loadNode(std::ifstream& file);
-	static void addData(const std::string& line, XMLNode* node);
-	static void addAttributes(const std::vector<std::string>& titleParts, XMLNode* node);
-	static void addAttribute(const std::string& attributeLine, XMLNode* node);
+	static std::shared_ptr<XMLNode>& loadNode(std::ifstream& file);
+	static void addData(const std::string& line, std::shared_ptr<XMLNode>& node);
+	static void addAttributes(const std::vector<std::string>& titleParts, std::shared_ptr<XMLNode>& node);
+	static void addAttribute(const std::string& attributeLine, std::shared_ptr<XMLNode>& node);
 	static std::string getStartTag(const std::string& line);
 	static bool checkClosedTag(const std::string& line);
 private:

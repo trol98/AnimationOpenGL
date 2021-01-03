@@ -145,7 +145,7 @@ int main()
 
 	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
 
-	XMLNode* node = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+	std::shared_ptr<XMLNode> node = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 
 	//TODO: Check if XMLNode does need copy/move constructor/=operator
 	//TODO: Change to std::vector<XMLNode*>*
@@ -155,7 +155,7 @@ int main()
 	{
 		std::cout << elem.first << std::endl;
 	}
-	delete node;
+	node = nullptr;
 	// configure global opengl state
 	// -----------------------------
 
