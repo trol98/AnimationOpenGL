@@ -12,67 +12,7 @@ XMLNode::~XMLNode()
 	m_attributes = nullptr;
 	m_childNodes = nullptr;
 }
-/*
-XMLNode::XMLNode(const XMLNode& other)
-	:m_name(other.m_name),
-	 m_data(other.m_data)
-{
-	
-	m_attributes = std::make_shared<std::unordered_map<std::string, std::string>>();
-	for (const auto& elem : *other.m_attributes)
-	{
-		this->m_attributes->emplace(elem);
-	}
 
-	m_childNodes = std::make_shared<std::unordered_map<std::string, std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>>>();
-	for (const auto& elem : *other.m_childNodes)
-	{
-		this->m_childNodes->emplace(std::make_pair(elem.first, std::make_shared<std::vector<std::shared_ptr<XMLNode>>>(elem.second)));
-		// TODO: Check if this part doesn't make a copy of sha
-	}
-	
-}
-*/
-/*
-XMLNode& XMLNode::operator=(const XMLNode& other)
-{
-	
-	// check for self-assignment
-	
-	
-	if (&other == this)
-		return *this;
-
-	m_name = other.m_name;
-	m_data = other.m_data;
-
-	if (m_childNodes != nullptr)
-	{
-		for (auto& elem : *m_childNodes)
-		{
-			elem.second = nullptr;
-		}
-	}
-	m_childNodes = nullptr;
-	m_attributes = nullptr;
-
-	m_attributes = std::make_shared<std::unordered_map<std::string, std::string>>();
-	for (const auto& elem : *other.m_attributes)
-	{
-		this->m_attributes->emplace(elem);
-	}
-
-	m_childNodes = std::make_shared<std::unordered_map<std::string, std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>>>();
-	for (const auto& elem : *other.m_childNodes)
-	{
-		this->m_childNodes->emplace(std::make_pair(elem.first, std::make_shared<std::vector<std::shared_ptr<XMLNode>>>()));
-		this->m_childNodes->at(elem.first) = elem.second;
-	}
-	
-	
-	return *this;
-}
-*/
 std::string XMLNode::getName() const
 {
 	return m_name;
@@ -123,17 +63,6 @@ std::shared_ptr<XMLNode> XMLNode::getChildWithAttribute(const std::string& child
 				return children->at(i);
 			}
 		}
-
-		/*
-		for (const XMLNode child : *children)
-		{
-			std::string val = child.getAttribute(attrib);
-			if (value == val)
-			{
-				return child;
-			}
-		}
-		*/
 	}
 	
 	return std::shared_ptr<XMLNode>(nullptr);
