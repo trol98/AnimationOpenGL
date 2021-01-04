@@ -4,7 +4,7 @@
 
 void VertexSkinData::addJointEffect(int jointID, float weight)
 {
-	for (int i = 0; i < weights.size(); i++) 
+	for (size_t i = 0; i < weights.size(); i++) 
 	{
 		if (weight > weights[i]) 
 		{
@@ -16,7 +16,7 @@ void VertexSkinData::addJointEffect(int jointID, float weight)
 	jointIDs.emplace_back(jointID);
 	weights.emplace_back(weight);
 }
-void VertexSkinData::limitJointNumber(int max)
+void VertexSkinData::limitJointNumber(size_t max)
 {
 	if (jointIDs.size() > max) 
 	{
@@ -31,7 +31,7 @@ void VertexSkinData::limitJointNumber(int max)
 		fillEmptyWeights(max);
 	}
 }
-void VertexSkinData::fillEmptyWeights(int max)
+void VertexSkinData::fillEmptyWeights(size_t max)
 {
 	while (jointIDs.size() < max) 
 	{
@@ -57,7 +57,7 @@ void VertexSkinData::refillWeightList(float* topWeights, int maxLength, float to
 		weights.emplace_back(std::min(topWeights[i] / total, 1.0f));
 	}
 }
-void VertexSkinData::removeExcessJointIDs(int max)
+void VertexSkinData::removeExcessJointIDs(size_t max)
 {
 	while (jointIDs.size() > max) 
 	{

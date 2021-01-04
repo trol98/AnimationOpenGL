@@ -145,17 +145,17 @@ int main()
 
 	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
 
-	std::shared_ptr<XMLNode> node = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+	std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 
 	//TODO: Check if XMLNode does need copy/move constructor/=operator
 	//TODO: Change to std::vector<XMLNode*>*
 
+	std::cout << std::string(50, '-') << std::endl;
+	std::string str = root->getChild("library_geometries")->getChild("geometry")->getChild("mesh")->getChild("source")->getChild("float_array")->getAttribute("count");
+	std::cout << str << std::endl;
 
-	for (const auto& elem : *node->get_children())
-	{
-		std::cout << elem.first << std::endl;
-	}
-	node = nullptr;
+
+	root = nullptr;
 	// configure global opengl state
 	// -----------------------------
 

@@ -9,10 +9,10 @@ public:
 	std::vector<float> weights;
 
 	void addJointEffect(int jointID, float weight);
-	void limitJointNumber(int max);
+	void limitJointNumber(size_t max);
 private:
-	void fillEmptyWeights(int max);
+	void fillEmptyWeights(size_t max);
 	float saveTopWeights(float* topWeightsArray, int topWeightsArrayLength);
 	void refillWeightList(float* topWeights, int topWeightsLength, float total);
-	void removeExcessJointIDs(int max);
+	void removeExcessJointIDs(size_t max);
 };

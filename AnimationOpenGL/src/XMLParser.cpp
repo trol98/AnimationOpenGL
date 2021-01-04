@@ -17,7 +17,7 @@ const std::regex XMLParser::CLOSED(R"((</|/>))");
 
 const std::string XMLParser::WHITESPACE = " \n\r\t\f\v";
 
-std::shared_ptr<XMLNode>& XMLParser::loadXMLFile(const std::string& path)
+std::shared_ptr<XMLNode> XMLParser::loadXMLFile(const std::string& path)
 {
 	std::ifstream file(path);
 	
@@ -27,7 +27,7 @@ std::shared_ptr<XMLNode>& XMLParser::loadXMLFile(const std::string& path)
 		return std::shared_ptr<XMLNode>(nullptr);
 	}
 
-	file.exceptions(std::ios::badbit | std::ios::eofbit | std::ios::failbit);
+	file.exceptions(std::ios::badbit | std::ios::failbit);
 
 	std::shared_ptr<XMLNode> node = nullptr;
 
@@ -45,9 +45,8 @@ std::shared_ptr<XMLNode>& XMLParser::loadXMLFile(const std::string& path)
 	file.close();
 	return node;
 }
-std::shared_ptr<XMLNode>& XMLParser::loadNode(std::ifstream& file)
+std::shared_ptr<XMLNode> XMLParser::loadNode(std::ifstream& file)
 {
-	
 	std::string line;
 	std::getline(file, line);
 	line = trim(line);

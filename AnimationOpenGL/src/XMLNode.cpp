@@ -12,11 +12,12 @@ XMLNode::~XMLNode()
 	m_attributes = nullptr;
 	m_childNodes = nullptr;
 }
-
+/*
 XMLNode::XMLNode(const XMLNode& other)
 	:m_name(other.m_name),
 	 m_data(other.m_data)
 {
+	
 	m_attributes = std::make_shared<std::unordered_map<std::string, std::string>>();
 	for (const auto& elem : *other.m_attributes)
 	{
@@ -29,11 +30,16 @@ XMLNode::XMLNode(const XMLNode& other)
 		this->m_childNodes->emplace(std::make_pair(elem.first, std::make_shared<std::vector<std::shared_ptr<XMLNode>>>(elem.second)));
 		// TODO: Check if this part doesn't make a copy of sha
 	}
+	
 }
-
+*/
+/*
 XMLNode& XMLNode::operator=(const XMLNode& other)
 {
+	
 	// check for self-assignment
+	
+	
 	if (&other == this)
 		return *this;
 
@@ -62,10 +68,11 @@ XMLNode& XMLNode::operator=(const XMLNode& other)
 		this->m_childNodes->emplace(std::make_pair(elem.first, std::make_shared<std::vector<std::shared_ptr<XMLNode>>>()));
 		this->m_childNodes->at(elem.first) = elem.second;
 	}
-
+	
+	
 	return *this;
 }
-
+*/
 std::string XMLNode::getName() const
 {
 	return m_name;
@@ -90,7 +97,7 @@ std::string XMLNode::getAttribute(const std::string& attrib) const
 	return nullptr;
 }
 
-std::shared_ptr<XMLNode>& XMLNode::getChild(const std::string& childName) const
+std::shared_ptr<XMLNode> XMLNode::getChild(const std::string& childName) const
 {
 	if (m_childNodes != nullptr) 
 	{
@@ -103,7 +110,7 @@ std::shared_ptr<XMLNode>& XMLNode::getChild(const std::string& childName) const
 	return std::shared_ptr<XMLNode>(nullptr);
 }
 
-std::shared_ptr<XMLNode>& XMLNode::getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const
+std::shared_ptr<XMLNode> XMLNode::getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const
 {
 	const std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>& children = getChildren(childName);
 	if (!(children == nullptr || children->empty())) 
@@ -128,11 +135,11 @@ std::shared_ptr<XMLNode>& XMLNode::getChildWithAttribute(const std::string& chil
 		}
 		*/
 	}
-
+	
 	return std::shared_ptr<XMLNode>(nullptr);
 }
 
-std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>& XMLNode::getChildren(const std::string& name) const
+std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>> XMLNode::getChildren(const std::string& name) const
 {
 	if (!(m_childNodes->at(name)->empty()))
 	{
@@ -152,15 +159,15 @@ void XMLNode::addAttribute(const std::string& attrib, const std::string& value)
 }
 
 void XMLNode::addChild(std::shared_ptr<XMLNode>& child)
-{
+{	
 	if (m_childNodes == nullptr)
 	{
-		m_childNodes = std::make_shared<std::unordered_map<std::string, std::shared_ptr<std::vector<XMLNode>>>>();
+		m_childNodes = std::make_shared<std::unordered_map<std::string, std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>>>();
 	}
 
 	if (m_childNodes->find(child->getName()) == m_childNodes->end())
 	{
-		m_childNodes->emplace(std::make_pair(child->getName(), std::make_shared<std::vector<XMLNode>>()));
+		m_childNodes->emplace(std::make_pair(child->getName(), std::make_shared<std::vector<std::shared_ptr<XMLNode>>>()));
 	}
 
 	(m_childNodes->at(child->getName()))->emplace_back(child);

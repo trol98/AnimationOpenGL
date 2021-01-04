@@ -15,8 +15,8 @@ private:
 public:
 	XMLNode(const std::string& name);
 	~XMLNode();
-	XMLNode(const XMLNode& other);
-	XMLNode& operator=(const XMLNode& other);
+	//XMLNode(const XMLNode& other);
+	//XMLNode& operator=(const XMLNode& other);
 
 	std::string getName() const;
 
@@ -24,11 +24,11 @@ public:
 
 	std::string getAttribute(const std::string& attrib) const;
 
-	std::shared_ptr<XMLNode>& getChild(const std::string& childName) const;
+	std::shared_ptr<XMLNode> getChild(const std::string& childName) const;
 
-	std::shared_ptr<XMLNode>& getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const;
+	std::shared_ptr<XMLNode> getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const;
 
-	std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>& getChildren(const std::string& name) const;
+	std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>> getChildren(const std::string& name) const;
 
 	void addAttribute(const std::string& attrib, const std::string& value);
 
