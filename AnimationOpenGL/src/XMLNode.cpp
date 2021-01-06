@@ -1,7 +1,10 @@
 #pragma once
 #include "XMLNode.h"
-#include <vector>
+
 #include <string>
+#include <unordered_map>
+#include <vector>
+#include <memory>
 
 XMLNode::XMLNode(const std::string& name)
 	:m_name(name), m_childNodes(nullptr), m_attributes(nullptr)
@@ -52,7 +55,7 @@ std::shared_ptr<XMLNode> XMLNode::getChild(const std::string& childName) const
 
 std::shared_ptr<XMLNode> XMLNode::getChildWithAttribute(const std::string& childName, const std::string& attrib, const std::string& value) const
 {
-	const std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>& children = getChildren(childName);
+	const auto& children = getChildren(childName);
 	if (!(children == nullptr || children->empty())) 
 	{
 		for (size_t i = 0; i < children->size(); i++)
@@ -94,14 +97,14 @@ void XMLNode::addChild(std::shared_ptr<XMLNode>& child)
 		m_childNodes = std::make_shared<std::unordered_map<std::string, std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>>>();
 	}
 
+	// if child doesn't exist in m_childNodes add a new map entry
 	if (m_childNodes->find(child->getName()) == m_childNodes->end())
 	{
 		m_childNodes->emplace(std::make_pair(child->getName(), std::make_shared<std::vector<std::shared_ptr<XMLNode>>>()));
 	}
 
-	(m_childNodes->at(child->getName()))->emplace_back(child);
-	// TODO: change this code to emplace a new pair and allocate memory
-	// Check deconstructor
+	// add child node to map 
+	m_childNodes->at(child->getName())->emplace_back(child);
 }
 
 
