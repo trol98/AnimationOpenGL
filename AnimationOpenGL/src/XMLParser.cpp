@@ -1,5 +1,7 @@
 #include "XMLParser.h"
 
+#include "StringUtils.h"
+
 #include <list>
 #include <string>
 #include <fstream>
@@ -14,8 +16,6 @@ const std::regex XMLParser::ATTR_NAME(R"((.+?)=)");
 const std::regex XMLParser::ATTR_VAL(R"(\"(.+?)\")");
 const std::regex XMLParser::CLOSED(R"((</|/>))");
 
-
-const std::string XMLParser::WHITESPACE = " \n\r\t\f\v";
 
 std::shared_ptr<XMLNode> XMLParser::loadXMLFile(const std::string& path)
 {
@@ -125,50 +125,4 @@ bool XMLParser::checkClosedTag(const std::string& line)
 {
 	std::smatch matches;
 	return std::regex_search(line, matches, CLOSED);
-}
-
-
-
-
-std::string XMLParser::ltrim(const std::string& s)
-{
-	size_t start = s.find_first_not_of(WHITESPACE);
-	return (start == std::string::npos) ? "" : s.substr(start);
-}
-
-std::string XMLParser::rtrim(const std::string& s)
-{
-	size_t end = s.find_last_not_of(WHITESPACE);
-	return (end == std::string::npos) ? "" : s.substr(0, end + 1);
-}
-
-std::string XMLParser::trim(const std::string& s)
-{
-	return rtrim(ltrim(s));
-}
-
-std::string XMLParser::remove(const std::string& s, char oldChar)
-{
-	std::string temp(s);
-	temp.erase(std::remove(temp.begin(), temp.end(), oldChar), temp.end());
-	return temp;
-}
-
-std::vector<std::string> XMLParser::split(const std::string& s, char splitCharacter)
-{
-	std::istringstream ss(s);
-	std::vector<std::string> output;
-
-	std::string substring;
-	while (getline(ss, substring, splitCharacter))
-	{
-		output.emplace_back(substring);
-	}
-
-	return output;
-}
-
-bool XMLParser::contains(const std::string& s, char ch)
-{
-	return (s.find(ch) != std::string::npos);
 }

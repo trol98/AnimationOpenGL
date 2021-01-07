@@ -32,9 +32,9 @@ AnimatedModelData ColladaLoader::loadColladaModel(const std::string path, int ma
 AnimationData ColladaLoader::loadColladaAnimation(const std::string path)
 {
 	std::shared_ptr<XMLNode> node = XMLParser::loadXMLFile(path);
-	std::shared_ptr<XMLNode> animNode = node->getChild("library_animations");
+	std::shared_ptr<XMLNode> animationsNode = node->getChild("library_animations");
 	std::shared_ptr<XMLNode> jointsNode = node->getChild("library_visual_scenes");
-	AnimationLoader loader = new AnimationLoader(animNode, jointsNode);
+	AnimationLoader loader = new AnimationLoader(animationsNode, jointsNode);
 	AnimationData animData = loader.extractAnimation();
 	return animData;
 }

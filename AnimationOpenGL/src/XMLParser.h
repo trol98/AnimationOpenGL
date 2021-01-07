@@ -25,14 +25,5 @@ private:
 	static const std::regex ATTR_VAL;
 	static const std::regex CLOSED;
 	static const std::string WHITESPACE;
-private:
-	// string utility methods
-	static std::string ltrim(const std::string& s);
-	static std::string rtrim(const std::string& s);
-	static std::string trim(const std::string& s);
-	static std::string remove(const std::string& s, char oldChar);
-
-	static bool contains(const std::string& s, char ch);
-	static std::vector<std::string> split(const std::string& s, char splitCharacter);
 };
 
