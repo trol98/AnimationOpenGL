@@ -23,8 +23,10 @@ AnimatedModelData ColladaLoader::loadColladaModel(const std::string path, int ma
 	SkeletonLoader jointsLoader = new SkeletonLoader(root->getChild("library_visual_scenes"), skinningData.jointOrder);
 	SkeletonData jointsData = jointsLoader.extractBoneData();
 
-	GeometryLoader g = new GeometryLoader(root->getChild("library_geometries"), skinningData.verticesSkinData);
-	MeshData meshData = g.extractModelData();
+	GeometryLoader* g = new GeometryLoader(root->getChild("library_geometries"), skinningData.verticesSkinData);
+	MeshData meshData = g->extractModelData();
+
+	delete g;
 
 	return new AnimatedModelData(meshData, jointsData);
 }

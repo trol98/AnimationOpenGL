@@ -15,6 +15,9 @@
 #include "OpenGLVertexArray.h"
 
 #include "XMLParser.h"
+#include "MeshData.h"
+#include "GeometryLoader.h"
+#include "VertexSkinData.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -146,6 +149,7 @@ int main()
 	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
 
 	std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+	
 
 	//TODO: Check if XMLNode does need copy/move constructor/=operator
 	//TODO: Change to std::vector<XMLNode*>*
@@ -154,6 +158,8 @@ int main()
 	std::string str = root->getChild("library_geometries")->getChild("geometry")->getChild("mesh")->getChild("source")->getChild("float_array")->getAttribute("count");
 	std::cout << str << std::endl;
 
+	
+	MeshData md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(9999)).extractModelData();
 
 	root = nullptr;
 	// configure global opengl state

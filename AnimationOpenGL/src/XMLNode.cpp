@@ -6,6 +6,8 @@
 #include <vector>
 #include <memory>
 
+
+
 XMLNode::XMLNode(const std::string& name)
 	:m_name(name), m_childNodes(nullptr), m_attributes(nullptr)
 {}
@@ -50,6 +52,7 @@ std::shared_ptr<XMLNode> XMLNode::getChild(const std::string& childName) const
 			return nodes->at(0);
 		}
 	}
+
 	return std::shared_ptr<XMLNode>(nullptr);
 }
 

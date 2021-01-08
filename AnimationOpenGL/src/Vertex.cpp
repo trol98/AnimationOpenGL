@@ -78,12 +78,12 @@ glm::vec3 Vertex::getPosition() const
 	return m_position;
 }
 
-Vertex* Vertex::getDuplicateVertex() const
+std::shared_ptr<Vertex> Vertex::getDuplicateVertex() const
 {
 	return m_duplicateVertex;
 }
 
-void Vertex::setDuplicateVertex(Vertex* duplicateVertex)
+void Vertex::setDuplicateVertex(const std::shared_ptr<Vertex>& duplicateVertex)
 {
 	m_duplicateVertex = duplicateVertex;
 }

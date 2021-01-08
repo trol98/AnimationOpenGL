@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include "VertexSkinData.h"
 
@@ -18,7 +19,7 @@ private:
 	int m_index;
 	float m_length;
 
-	Vertex* m_duplicateVertex;
+	std::shared_ptr<Vertex> m_duplicateVertex;
 	VertexSkinData m_weightsData;
 
 	std::vector<glm::vec3> m_tangents;
@@ -44,7 +45,7 @@ public:
 
 	glm::vec3 getPosition() const;
 
-	Vertex* getDuplicateVertex() const;
-	void setDuplicateVertex(Vertex* duplicateVertex);
+	std::shared_ptr<Vertex> getDuplicateVertex() const;
+	void setDuplicateVertex(const std::shared_ptr<Vertex>& duplicateVertex);
 
 };

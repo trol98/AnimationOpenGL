@@ -1,35 +1,42 @@
 #include "MeshData.h"
+#include <memory>
 
 MeshData::MeshData(const std::vector<float>& v, const std::vector<float>& t, const std::vector<float>& n,
 	const std::vector<int>& i, const std::vector<int>& IDs, const std::vector<float>& w)
-	:m_vertices(v), m_textureCoords(t), m_normals(n), m_indices(i), m_jointIDs(IDs), m_vertexWeights(w)
+	:m_count(v.size()), 
+	 m_vertices(new float[v.size()]),
+	 m_textureCoords(new float[t.size()]),
+	 m_normals(new float[n.size()]),
+	 m_indices(new int[i.size()]),
+	 m_jointIDs(new int[IDs.size()]),
+	 m_vertexWeights(new float[w.size()])						
 {
 }
-std::vector <float> MeshData::getVertices()
+std::shared_ptr<float[]> MeshData::getVertices()
 {
 	return m_vertices;
 }
-std::vector <int> MeshData::getIndices()
+std::shared_ptr <int[]> MeshData::getIndices()
 {
 	return m_indices;
 }
-std::vector <float> MeshData::getNormals()
+std::shared_ptr <float[]> MeshData::getNormals()
 {
 	return m_normals;
 }
-std::vector <float> MeshData::getTextureCoords()
+std::shared_ptr <float[]> MeshData::getTextureCoords()
 {
 	return m_textureCoords;
 }
-std::vector <float> MeshData::getVertexWeights()
+std::shared_ptr <float[]> MeshData::getVertexWeights()
 {
 	return m_vertexWeights;
 }
-std::vector <int> MeshData::getJointIds()
+std::shared_ptr <int[]> MeshData::getJointIds()
 {
 	return m_jointIDs;
 }
 int MeshData::getVertexCount()
 {
-	return m_vertices.size() / 3;
+	return m_count / 3;
 }

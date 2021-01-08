@@ -25,10 +25,10 @@ private:
 	std::vector<int>   m_jointIDsArray;
 	std::vector<float> m_weightsArray;
 
-	std::vector<Vertex>	   m_vertices;
-	std::vector<glm::vec2> m_textures;
-	std::vector<glm::vec3> m_normals;
-	std::vector<int>	   m_indices;
+	std::vector<std::shared_ptr<Vertex>> m_vertices;
+	std::vector<glm::vec2>				 m_textures;
+	std::vector<glm::vec3>				 m_normals;
+	std::vector<int>					 m_indices;
 
 	static const glm::mat4 CORRECTION;
 public:
@@ -42,9 +42,9 @@ private:
 	void assembleVertices();
 	void removeUnusedVertices();
 
-	Vertex processVertex(int positionIndex, int normalsIndex, int texureIndex);
-	Vertex dealWithAlreadyProcessedVertex(const Vertex& previousVertex, int newTextureIndex, int newNormalIndex);
+	std::shared_ptr<Vertex> processVertex(int positionIndex, int normalsIndex, int texureIndex);
+	std::shared_ptr<Vertex> dealWithAlreadyProcessedVertex(std::shared_ptr<Vertex>& previousVertex, int newTextureIndex, int newNormalIndex);
 
-	int* convertIndicesListToArray();
 	float convertDataToArrays();
+	std::vector<int> convertIndicesListToArray();
 };

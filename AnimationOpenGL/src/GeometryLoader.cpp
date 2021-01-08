@@ -7,194 +7,6 @@
 
 const glm::mat4 GeometryLoader::CORRECTION = glm::rotate(glm::mat4(), glm::radians(-90.0f), glm::vec3(1, 0, 0));
 
-/*
-public class GeometryLoader {
-
-	private static final Matrix4f CORRECTION = new Matrix4f().rotate((float) Math.toRadians(-90), new Vector3f(1, 0,0));
-
-	private final XmlNode meshData;
-
-	private final List<VertexSkinData> vertexWeights;
-
-	private float[] verticesArray;
-	private float[] normalsArray;
-	private float[] texturesArray;
-	private int[] indicesArray;
-	private int[] jointIdsArray;
-	private float[] weightsArray;
-
-	List<Vertex> vertices = new ArrayList<Vertex>();
-	List<Vector2f> textures = new ArrayList<Vector2f>();
-	List<Vector3f> normals = new ArrayList<Vector3f>();
-	List<Integer> indices = new ArrayList<Integer>();
-
-
-	public MeshData extractModelData(){
-		readRawData();
-		assembleVertices();
-		removeUnusedVertices();
-		initArrays();
-		convertDataToArrays();
-		convertIndicesListToArray();
-		return new MeshData(verticesArray, texturesArray, normalsArray, indicesArray, jointIdsArray, weightsArray);
-	}
-
-	private void readRawData() {
-		readPositions();
-		readNormals();
-		readTextureCoords();
-	}
-
-	private void readPositions() {
-		String positionsId = meshData.getChild("vertices").getChild("input").getAttribute("source").substring(1);
-		XmlNode positionsData = meshData.getChildWithAttribute("source", "id", positionsId).getChild("float_array");
-		int count = Integer.parseInt(positionsData.getAttribute("count"));
-		String[] posData = positionsData.getData().split(" ");
-		for (int i = 0; i < count/3; i++) {
-			float x = Float.parseFloat(posData[i * 3]);
-			float y = Float.parseFloat(posData[i * 3 + 1]);
-			float z = Float.parseFloat(posData[i * 3 + 2]);
-			Vector4f position = new Vector4f(x, y, z, 1);
-			Matrix4f.transform(CORRECTION, position, position);
-			vertices.add(new Vertex(vertices.size(), new Vector3f(position.x, position.y, position.z), vertexWeights.get(vertices.size())));
-		}
-	}
-
-	private void readNormals() {
-		String normalsId = meshData.getChild("polylist").getChildWithAttribute("input", "semantic", "NORMAL")
-				.getAttribute("source").substring(1);
-		XmlNode normalsData = meshData.getChildWithAttribute("source", "id", normalsId).getChild("float_array");
-		int count = Integer.parseInt(normalsData.getAttribute("count"));
-		String[] normData = normalsData.getData().split(" ");
-		for (int i = 0; i < count/3; i++) {
-			float x = Float.parseFloat(normData[i * 3]);
-			float y = Float.parseFloat(normData[i * 3 + 1]);
-			float z = Float.parseFloat(normData[i * 3 + 2]);
-			Vector4f norm = new Vector4f(x, y, z, 0f);
-			Matrix4f.transform(CORRECTION, norm, norm);
-			normals.add(new Vector3f(norm.x, norm.y, norm.z));
-		}
-	}
-
-	private void readTextureCoords() {
-		String texCoordsId = meshData.getChild("polylist").getChildWithAttribute("input", "semantic", "TEXCOORD")
-				.getAttribute("source").substring(1);
-		XmlNode texCoordsData = meshData.getChildWithAttribute("source", "id", texCoordsId).getChild("float_array");
-		int count = Integer.parseInt(texCoordsData.getAttribute("count"));
-		String[] texData = texCoordsData.getData().split(" ");
-		for (int i = 0; i < count/2; i++) {
-			float s = Float.parseFloat(texData[i * 2]);
-			float t = Float.parseFloat(texData[i * 2 + 1]);
-			textures.add(new Vector2f(s, t));
-		}
-	}
-
-	private void assembleVertices(){
-		XmlNode poly = meshData.getChild("polylist");
-		int typeCount = poly.getChildren("input").size();
-		String[] indexData = poly.getChild("p").getData().split(" ");
-		for(int i=0;i<indexData.length/typeCount;i++){
-			int positionIndex = Integer.parseInt(indexData[i * typeCount]);
-			int normalIndex = Integer.parseInt(indexData[i * typeCount + 1]);
-			int texCoordIndex = Integer.parseInt(indexData[i * typeCount + 2]);
-			processVertex(positionIndex, normalIndex, texCoordIndex);
-		}
-	}
-
-
-	private Vertex processVertex(int posIndex, int normIndex, int texIndex) {
-		Vertex currentVertex = vertices.get(posIndex);
-		if (!currentVertex.isSet()) {
-			currentVertex.setTextureIndex(texIndex);
-			currentVertex.setNormalIndex(normIndex);
-			indices.add(posIndex);
-			return currentVertex;
-		} else {
-			return dealWithAlreadyProcessedVertex(currentVertex, texIndex, normIndex);
-		}
-	}
-
-	private int[] convertIndicesListToArray() {
-		this.indicesArray = new int[indices.size()];
-		for (int i = 0; i < indicesArray.length; i++) {
-			indicesArray[i] = indices.get(i);
-		}
-		return indicesArray;
-	}
-
-	private float convertDataToArrays() {
-		float furthestPoint = 0;
-		for (int i = 0; i < vertices.size(); i++) {
-			Vertex currentVertex = vertices.get(i);
-			if (currentVertex.getLength() > furthestPoint) {
-				furthestPoint = currentVertex.getLength();
-			}
-			Vector3f position = currentVertex.getPosition();
-			Vector2f textureCoord = textures.get(currentVertex.getTextureIndex());
-			Vector3f normalVector = normals.get(currentVertex.getNormalIndex());
-			verticesArray[i * 3] = position.x;
-			verticesArray[i * 3 + 1] = position.y;
-			verticesArray[i * 3 + 2] = position.z;
-			texturesArray[i * 2] = textureCoord.x;
-			texturesArray[i * 2 + 1] = 1 - textureCoord.y;
-			normalsArray[i * 3] = normalVector.x;
-			normalsArray[i * 3 + 1] = normalVector.y;
-			normalsArray[i * 3 + 2] = normalVector.z;
-			VertexSkinData weights = currentVertex.getWeightsData();
-			jointIdsArray[i * 3] = weights.jointIds.get(0);
-			jointIdsArray[i * 3 + 1] = weights.jointIds.get(1);
-			jointIdsArray[i * 3 + 2] = weights.jointIds.get(2);
-			weightsArray[i * 3] = weights.weights.get(0);
-			weightsArray[i * 3 + 1] = weights.weights.get(1);
-			weightsArray[i * 3 + 2] = weights.weights.get(2);
-
-		}
-		return furthestPoint;
-	}
-
-	private Vertex dealWithAlreadyProcessedVertex(Vertex previousVertex, int newTextureIndex, int newNormalIndex) {
-		if (previousVertex.hasSameTextureAndNormal(newTextureIndex, newNormalIndex)) {
-			indices.add(previousVertex.getIndex());
-			return previousVertex;
-		} else {
-			Vertex anotherVertex = previousVertex.getDuplicateVertex();
-			if (anotherVertex != null) {
-				return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex);
-			} else {
-				Vertex duplicateVertex = new Vertex(vertices.size(), previousVertex.getPosition(), previousVertex.getWeightsData());
-				duplicateVertex.setTextureIndex(newTextureIndex);
-				duplicateVertex.setNormalIndex(newNormalIndex);
-				previousVertex.setDuplicateVertex(duplicateVertex);
-				vertices.add(duplicateVertex);
-				indices.add(duplicateVertex.getIndex());
-				return duplicateVertex;
-			}
-
-		}
-	}
-
-	private void initArrays(){
-		this.verticesArray = new float[vertices.size() * 3];
-		this.texturesArray = new float[vertices.size() * 2];
-		this.normalsArray = new float[vertices.size() * 3];
-		this.jointIdsArray = new int[vertices.size() * 3];
-		this.weightsArray = new float[vertices.size() * 3];
-	}
-
-	private void removeUnusedVertices() {
-		for (Vertex vertex : vertices) {
-			vertex.averageTangents();
-			if (!vertex.isSet()) {
-				vertex.setTextureIndex(0);
-				vertex.setNormalIndex(0);
-			}
-		}
-	}
-
-}
-
-*/
-
 GeometryLoader::GeometryLoader(const std::shared_ptr<XMLNode>& geometryNode, const std::vector<VertexSkinData>& vertexWeights)
 	:m_meshData(geometryNode->getChild("geometry")->getChild("mesh")), m_vertexWeights(vertexWeights)
 {
@@ -221,6 +33,7 @@ MeshData GeometryLoader::extractModelData()
 
 void GeometryLoader::readPositions()
 {
+	
 	std::string positionsID = m_meshData->getChild("vertices")->getChild("input")->getAttribute("source").substr(1);
 	std::shared_ptr<XMLNode> positionsData = m_meshData->getChildWithAttribute("source", "id", positionsID)->getChild("float_array");
 
@@ -236,17 +49,175 @@ void GeometryLoader::readPositions()
 		float z = std::stof(posData[i * 3 + 2]);
 
 		glm::vec4 position(x, y, z, 1.0f);
-		position = CORRECTION * position;
+		position = position * CORRECTION;
 
 		size_t index = m_vertices.size();
 		m_vertices.emplace_back(Vertex(index, glm::vec3(position), m_vertexWeights.at(index)));
 	}
+	
 }
 
 void GeometryLoader::readNormals()
 {
+	std::string normalsId = m_meshData->getChild("polylist")->getChildWithAttribute("input", "semantic", "NORMAL")->getAttribute("source").substr(1);
+	std::shared_ptr<XMLNode> normalsData = m_meshData->getChildWithAttribute("source", "id", normalsId)->getChild("float_array");
+
+	int count = std::stoi(normalsData->getAttribute("count"));
+	std::vector<std::string> normData = split(normalsData->getData(), ' ');
+
+	// count will be always divisible by 3
+	for (int i = 0; i < count / 3; i++)
+	{
+		float x = std::stof(normData[i * 3 + 0]);
+		float y = std::stof(normData[i * 3 + 1]);
+		float z = std::stof(normData[i * 3 + 2]);
+
+		glm::vec4 normal(x, y, z, 0.0f);
+		normal = normal * CORRECTION;
+
+		m_normals.emplace_back(glm::vec3(normal));
+	}
 }
 
 void GeometryLoader::readTextureCoords()
 {
+	std::string texCoordsId = m_meshData->getChild("polylist")->getChildWithAttribute("input", "semantic", "TEXCOORD")->getAttribute("source").substr(1);
+	std::shared_ptr<XMLNode> texCoordsData = m_meshData->getChildWithAttribute("source", "id", texCoordsId)->getChild("float_array");
+
+	int count = std::stoi(texCoordsData->getAttribute("count"));
+	std::vector<std::string> textureData = split(texCoordsData->getData(), ' ');
+
+	// count will be always divisible by 2
+	for (int i = 0; i < count / 2; i++)
+	{
+		float s = std::stof(textureData[i * 2 + 0]);
+		float t = std::stof(textureData[i * 2 + 1]);
+
+		m_textures.emplace_back(glm::vec2(s, t));
+	}
+}
+
+void GeometryLoader::assembleVertices()
+{
+	std::shared_ptr<XMLNode> poly = m_meshData->getChild("polylist");
+
+	int typeCount = poly->getChildren("input")->size();
+	std::vector<std::string> indexData = split(poly->getChild("p")->getData(), ' ');
+
+	for (size_t i = 0; i < indexData.size() / typeCount; i++) {
+		int positionIndex = std::stoi(indexData[i * typeCount + 0]);
+		int normalIndex   =	std::stoi(indexData[i * typeCount + 1]);
+		int texCoordIndex = std::stoi(indexData[i * typeCount + 2]);
+		processVertex(positionIndex, normalIndex, texCoordIndex);
+	}
+}
+
+
+
+std::shared_ptr<Vertex> GeometryLoader::processVertex(int positionIndex, int normalsIndex, int texureIndex)
+{
+	std::shared_ptr<Vertex> currentVertex = m_vertices.at(positionIndex);
+	if (!currentVertex->isSet()) 
+	{
+		currentVertex->setTextureIndex(texureIndex);
+		currentVertex->setNormalIndex(normalsIndex);
+		m_indices.emplace_back(positionIndex);
+		return currentVertex;
+	}
+	else 
+	{
+		return dealWithAlreadyProcessedVertex(currentVertex, texureIndex, normalsIndex);
+	}
+}
+
+std::shared_ptr<Vertex> GeometryLoader::dealWithAlreadyProcessedVertex(std::shared_ptr<Vertex>& previousVertex, int newTextureIndex, int newNormalIndex)
+{
+	if (previousVertex->hasSameTextureAndNormal(newTextureIndex, newNormalIndex))
+	{
+		m_indices.emplace_back(previousVertex->getIndex());
+		return previousVertex;
+	}
+	else {
+		std::shared_ptr<Vertex> anotherVertex = previousVertex->getDuplicateVertex();
+		if (anotherVertex != nullptr)
+		{
+			return dealWithAlreadyProcessedVertex(anotherVertex, newTextureIndex, newNormalIndex);
+		}
+		else
+		{
+			std::shared_ptr<Vertex> duplicateVertex = std::make_shared<Vertex>(m_vertices.size(), previousVertex->getPosition(), previousVertex->getWeightsData());
+			duplicateVertex->setTextureIndex(newTextureIndex);
+			duplicateVertex->setNormalIndex(newNormalIndex);
+			previousVertex->setDuplicateVertex(duplicateVertex);
+			m_vertices.emplace_back(duplicateVertex);
+			m_indices.emplace_back(duplicateVertex->getIndex());
+			return duplicateVertex;
+		}
+
+	}
+}
+
+void GeometryLoader::removeUnusedVertices()
+{
+	for (auto& vertex : m_vertices) {
+		vertex->averageTangents();
+		if (!vertex->isSet()) {
+			vertex->setTextureIndex(0);
+			vertex->setNormalIndex(0);
+		}
+	}
+}
+
+void GeometryLoader::initArrays()
+{
+	m_verticesArray.resize(m_vertices.size() * 3);
+	m_texturesArray.resize(m_vertices.size() * 2);
+	m_normalsArray .resize(m_vertices.size() * 3);
+	m_jointIDsArray.resize(m_vertices.size() * 3);
+	m_weightsArray .resize(m_vertices.size() * 3);
+}
+
+float GeometryLoader::convertDataToArrays()
+{
+	float furthestPoint = 0;
+	for (size_t i = 0; i < m_vertices.size(); i++) {
+		std::shared_ptr<Vertex> currentVertex = m_vertices.at(i);
+		if (currentVertex->getLength() > furthestPoint) {
+			furthestPoint = currentVertex->getLength();
+		}
+		glm::vec3 position = currentVertex->getPosition();
+		glm::vec2 textureCoord = m_textures.at(currentVertex->getTextureIndex());
+		glm::vec3 normalVector = m_normals.at(currentVertex->getNormalIndex());
+
+		m_verticesArray[i * 3 + 0] = position.x;
+		m_verticesArray[i * 3 + 1] = position.y;
+		m_verticesArray[i * 3 + 2] = position.z;
+
+		m_texturesArray[i * 2 + 0] = textureCoord.x;
+		m_texturesArray[i * 2 + 1] = 1 - textureCoord.y; // reversed
+
+		m_normalsArray[i * 3 + 0] = normalVector.x;
+		m_normalsArray[i * 3 + 1] = normalVector.y;
+		m_normalsArray[i * 3 + 2] = normalVector.z;
+
+		VertexSkinData weights = currentVertex->getWeightsData();
+		m_jointIDsArray[i * 3 + 0] = weights.jointIDs.at(0);
+		m_jointIDsArray[i * 3 + 1] = weights.jointIDs.at(1);
+		m_jointIDsArray[i * 3 + 2] = weights.jointIDs.at(2);
+
+		m_weightsArray[i * 3 + 0] = weights.weights.at(0);
+		m_weightsArray[i * 3 + 1] = weights.weights.at(1);
+		m_weightsArray[i * 3 + 2] = weights.weights.at(2);
+
+	}
+	return furthestPoint;
+}
+
+std::vector<int> GeometryLoader::convertIndicesListToArray()
+{
+	m_indicesArray.resize(m_indices.size());
+	for (size_t i = 0; i < m_indicesArray.size(); i++) {
+		m_indicesArray[i] = m_indices.at(i);
+	}
+	return m_indicesArray;
 }
