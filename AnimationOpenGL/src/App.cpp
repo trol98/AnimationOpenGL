@@ -159,7 +159,7 @@ int main()
 	std::cout << str << std::endl;
 
 	
-	MeshData md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(9999)).extractModelData();
+	MeshData md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(999999)).extractModelData();
 
 	root = nullptr;
 	// configure global opengl state

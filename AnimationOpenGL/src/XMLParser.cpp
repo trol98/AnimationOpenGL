@@ -1,6 +1,6 @@
 #include "XMLParser.h"
 
-#include "StringUtils.h"
+
 
 #include <list>
 #include <string>

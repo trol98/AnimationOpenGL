@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 
+#include "StringUtils.h"
 #include "XMLNode.h"
 
 class XMLParser

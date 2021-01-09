@@ -1,6 +1,6 @@
 #include "GeometryLoader.h"
 
-#include "StringUtils.h"
+
 
 #include "vendor/glm/glm/glm.hpp"
 #include "vendor/glm/glm/gtc/matrix_transform.hpp"
@@ -33,7 +33,6 @@ MeshData GeometryLoader::extractModelData()
 
 void GeometryLoader::readPositions()
 {
-	
 	std::string positionsID = m_meshData->getChild("vertices")->getChild("input")->getAttribute("source").substr(1);
 	std::shared_ptr<XMLNode> positionsData = m_meshData->getChildWithAttribute("source", "id", positionsID)->getChild("float_array");
 
@@ -52,9 +51,8 @@ void GeometryLoader::readPositions()
 		position = position * CORRECTION;
 
 		size_t index = m_vertices.size();
-		m_vertices.emplace_back(Vertex(index, glm::vec3(position), m_vertexWeights.at(index)));
+		m_vertices.emplace_back(std::make_shared<Vertex>(index, glm::vec3(position), m_vertexWeights.at(index)));
 	}
-	
 }
 
 void GeometryLoader::readNormals()
@@ -81,6 +79,7 @@ void GeometryLoader::readNormals()
 
 void GeometryLoader::readTextureCoords()
 {
+
 	std::string texCoordsId = m_meshData->getChild("polylist")->getChildWithAttribute("input", "semantic", "TEXCOORD")->getAttribute("source").substr(1);
 	std::shared_ptr<XMLNode> texCoordsData = m_meshData->getChildWithAttribute("source", "id", texCoordsId)->getChild("float_array");
 
@@ -111,8 +110,6 @@ void GeometryLoader::assembleVertices()
 		processVertex(positionIndex, normalIndex, texCoordIndex);
 	}
 }
-
-
 
 std::shared_ptr<Vertex> GeometryLoader::processVertex(int positionIndex, int normalsIndex, int texureIndex)
 {
@@ -153,7 +150,6 @@ std::shared_ptr<Vertex> GeometryLoader::dealWithAlreadyProcessedVertex(std::shar
 			m_indices.emplace_back(duplicateVertex->getIndex());
 			return duplicateVertex;
 		}
-
 	}
 }
 
@@ -208,7 +204,6 @@ float GeometryLoader::convertDataToArrays()
 		m_weightsArray[i * 3 + 0] = weights.weights.at(0);
 		m_weightsArray[i * 3 + 1] = weights.weights.at(1);
 		m_weightsArray[i * 3 + 2] = weights.weights.at(2);
-
 	}
 	return furthestPoint;
 }
