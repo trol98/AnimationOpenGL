@@ -1,11 +1,12 @@
 #include "GeometryLoader.h"
 
+#include <iostream> // NOTE: Debug only
 
 
 #include "vendor/glm/glm/glm.hpp"
 #include "vendor/glm/glm/gtc/matrix_transform.hpp"
 
-const glm::mat4 GeometryLoader::CORRECTION = glm::rotate(glm::mat4(), glm::radians(-90.0f), glm::vec3(1, 0, 0));
+const glm::mat4 GeometryLoader::CORRECTION = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 GeometryLoader::GeometryLoader(const std::shared_ptr<XMLNode>& geometryNode, const std::vector<VertexSkinData>& vertexWeights)
 	:m_meshData(geometryNode->getChild("geometry")->getChild("mesh")), m_vertexWeights(vertexWeights)
@@ -48,8 +49,8 @@ void GeometryLoader::readPositions()
 		float z = std::stof(posData[i * 3 + 2]);
 
 		glm::vec4 position(x, y, z, 1.0f);
-		position = position * CORRECTION;
-
+		glm::vec4 result = CORRECTION * position;
+		std::cout << position.x << ' ' << position.y << ' ' << position.z << std::endl;
 		size_t index = m_vertices.size();
 		m_vertices.emplace_back(std::make_shared<Vertex>(index, glm::vec3(position), m_vertexWeights.at(index)));
 	}
@@ -71,7 +72,7 @@ void GeometryLoader::readNormals()
 		float z = std::stof(normData[i * 3 + 2]);
 
 		glm::vec4 normal(x, y, z, 0.0f);
-		normal = normal * CORRECTION;
+		normal = CORRECTION * normal;
 
 		m_normals.emplace_back(glm::vec3(normal));
 	}
