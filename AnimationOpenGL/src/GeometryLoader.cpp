@@ -50,7 +50,7 @@ void GeometryLoader::readPositions()
 
 		glm::vec4 position(x, y, z, 1.0f);
 		glm::vec4 result = CORRECTION * position;
-		std::cout << position.x << ' ' << position.y << ' ' << position.z << std::endl;
+
 		size_t index = m_vertices.size();
 		m_vertices.emplace_back(std::make_shared<Vertex>(index, glm::vec3(position), m_vertexWeights.at(index)));
 	}
@@ -104,6 +104,11 @@ void GeometryLoader::assembleVertices()
 	int typeCount = poly->getChildren("input")->size();
 	std::vector<std::string> indexData = split(poly->getChild("p")->getData(), ' ');
 
+	//for (const auto& vertex : m_vertices)
+	//{
+	//	vertex->debugPrint();
+	//}
+
 	for (size_t i = 0; i < indexData.size() / typeCount; i++) {
 		int positionIndex = std::stoi(indexData[i * typeCount + 0]);
 		int normalIndex   =	std::stoi(indexData[i * typeCount + 1]);
@@ -122,10 +127,7 @@ std::shared_ptr<Vertex> GeometryLoader::processVertex(int positionIndex, int nor
 		m_indices.emplace_back(positionIndex);
 		return currentVertex;
 	}
-	else 
-	{
-		return dealWithAlreadyProcessedVertex(currentVertex, texureIndex, normalsIndex);
-	}
+	return dealWithAlreadyProcessedVertex(currentVertex, texureIndex, normalsIndex);
 }
 
 std::shared_ptr<Vertex> GeometryLoader::dealWithAlreadyProcessedVertex(std::shared_ptr<Vertex>& previousVertex, int newTextureIndex, int newNormalIndex)
@@ -135,7 +137,8 @@ std::shared_ptr<Vertex> GeometryLoader::dealWithAlreadyProcessedVertex(std::shar
 		m_indices.emplace_back(previousVertex->getIndex());
 		return previousVertex;
 	}
-	else {
+	else 
+	{
 		std::shared_ptr<Vertex> anotherVertex = previousVertex->getDuplicateVertex();
 		if (anotherVertex != nullptr)
 		{
@@ -177,14 +180,16 @@ void GeometryLoader::initArrays()
 float GeometryLoader::convertDataToArrays()
 {
 	float furthestPoint = 0;
-	for (size_t i = 0; i < m_vertices.size(); i++) {
+	for (size_t i = 0; i < m_vertices.size(); i++)
+	{
 		std::shared_ptr<Vertex> currentVertex = m_vertices.at(i);
-		if (currentVertex->getLength() > furthestPoint) {
+		if (currentVertex->getLength() > furthestPoint)
+		{
 			furthestPoint = currentVertex->getLength();
 		}
 		glm::vec3 position = currentVertex->getPosition();
-		glm::vec2 textureCoord = m_textures.at(currentVertex->getTextureIndex());
-		glm::vec3 normalVector = m_normals.at(currentVertex->getNormalIndex());
+		glm::vec2 textureCoord = m_textures[currentVertex->getTextureIndex()];
+		glm::vec3 normalVector = m_normals[currentVertex->getNormalIndex()];
 
 		m_verticesArray[i * 3 + 0] = position.x;
 		m_verticesArray[i * 3 + 1] = position.y;
@@ -198,13 +203,13 @@ float GeometryLoader::convertDataToArrays()
 		m_normalsArray[i * 3 + 2] = normalVector.z;
 
 		VertexSkinData weights = currentVertex->getWeightsData();
-		m_jointIDsArray[i * 3 + 0] = weights.jointIDs.at(0);
-		m_jointIDsArray[i * 3 + 1] = weights.jointIDs.at(1);
-		m_jointIDsArray[i * 3 + 2] = weights.jointIDs.at(2);
+		m_jointIDsArray[i * 3 + 0] = weights.jointIDs[0];
+		m_jointIDsArray[i * 3 + 1] = weights.jointIDs[1];
+		m_jointIDsArray[i * 3 + 2] = weights.jointIDs[2];
 
-		m_weightsArray[i * 3 + 0] = weights.weights.at(0);
-		m_weightsArray[i * 3 + 1] = weights.weights.at(1);
-		m_weightsArray[i * 3 + 2] = weights.weights.at(2);
+		m_weightsArray[i * 3 + 0] = weights.weights[0];
+		m_weightsArray[i * 3 + 1] = weights.weights[1];
+		m_weightsArray[i * 3 + 2] = weights.weights[2];
 	}
 	return furthestPoint;
 }
@@ -212,8 +217,9 @@ float GeometryLoader::convertDataToArrays()
 std::vector<int> GeometryLoader::convertIndicesListToArray()
 {
 	m_indicesArray.resize(m_indices.size());
-	for (size_t i = 0; i < m_indicesArray.size(); i++) {
-		m_indicesArray[i] = m_indices.at(i);
+	for (size_t i = 0; i < m_indicesArray.size(); i++)
+	{
+		m_indicesArray[i] = m_indices[i];
 	}
 	return m_indicesArray;
 }

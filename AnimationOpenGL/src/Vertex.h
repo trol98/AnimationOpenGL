@@ -14,10 +14,10 @@ private:
 
 	glm::vec3 m_position;
 
-	int m_textureIndex;
-	int m_normalIndex;
-	int m_index;
-	float m_length;
+	int		m_textureIndex;
+	int		m_normalIndex;
+	int		m_index;
+	float	m_length;
 
 	std::shared_ptr<Vertex> m_duplicateVertex;
 	VertexSkinData m_weightsData;
@@ -48,4 +48,6 @@ public:
 	std::shared_ptr<Vertex> getDuplicateVertex() const;
 	void setDuplicateVertex(const std::shared_ptr<Vertex>& duplicateVertex);
 
+
+	void debugPrint();
 };

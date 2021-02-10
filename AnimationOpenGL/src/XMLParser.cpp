@@ -62,7 +62,7 @@ std::shared_ptr<XMLNode> XMLParser::loadNode(std::ifstream& file)
 
 	std::shared_ptr<XMLNode> node = std::make_shared<XMLNode>(remove(startTagParts[0], '/'));
 	
-	std::cout << node->getName() << std::endl; // ONLY FOR DEBUGGING
+	//std::cout << node->getName() << std::endl; // ONLY FOR DEBUGGING
 
 	addAttributes(startTagParts, node);
 	addData(line, node);

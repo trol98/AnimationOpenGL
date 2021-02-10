@@ -1,8 +1,11 @@
 #include "Vertex.h"
+#include <iostream>
 
 const int Vertex::INVALID_INDEX = -1;
 
 Vertex::Vertex(int index, const glm::vec3& position, const VertexSkinData& weightsData)
+	:m_index(index), m_weightsData(weightsData), m_position(position), m_length(glm::length(position)),
+	 m_normalIndex(), m_textureIndex(), m_duplicateVertex(nullptr), m_tangents(), m_averagedTangent()
 {
 }
 
@@ -22,7 +25,7 @@ void Vertex::averageTangents()
 	{
 		for (const auto& tangent : m_tangents)
 		{
-			m_averagedTangent += tangent;
+			m_averagedTangent = m_averagedTangent +  tangent;
 		}
 		m_averagedTangent = glm::normalize(m_averagedTangent);
 	}
@@ -86,4 +89,15 @@ std::shared_ptr<Vertex> Vertex::getDuplicateVertex() const
 void Vertex::setDuplicateVertex(const std::shared_ptr<Vertex>& duplicateVertex)
 {
 	m_duplicateVertex = duplicateVertex;
+}
+
+void Vertex::debugPrint()
+{
+	std::cout << "{" << m_position.x << ", " << m_position.y << ", " << m_position.z << "}\n";
+
+	std::cout << "IndexT: " << m_textureIndex << "\n";
+	std::cout << "IndexN: " << m_textureIndex << "\n";
+	std::cout << "Index : " << m_textureIndex << "\n";
+	std::cout << "Length: " << m_textureIndex << "\n";
+	std::cout << "--------------------------------\n";
 }

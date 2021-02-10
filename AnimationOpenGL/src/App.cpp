@@ -161,6 +161,11 @@ int main()
 	
 	MeshData md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(999999)).extractModelData();
 
+	// PLEASE REMOVE 
+	// VertexSkinData defualt ctor after SkinDataLoader is ready
+	// PLEASE REMOVE
+
+
 	root = nullptr;
 	// configure global opengl state
 	// -----------------------------
