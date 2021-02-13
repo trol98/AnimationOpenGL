@@ -18,7 +18,7 @@ private:
 	const std::shared_ptr<XMLNode> m_meshData;
 	const std::vector<VertexSkinData> m_vertexWeights;
 
-	//TODO: consider changing this to unique_ptr<>
+	//TODO: improve storing of data
 	std::vector<float> m_verticesArray;
 	std::vector<float> m_normalsArray;
 	std::vector<float> m_texturesArray;
@@ -36,16 +36,17 @@ public:
 	GeometryLoader(const std::shared_ptr<XMLNode>& geometryNode, const std::vector<VertexSkinData>& vertexWeights);
 	MeshData extractModelData();
 private:
-	void initArrays();
 	void readPositions();
 	void readNormals();
 	void readTextureCoords();
+
 	void assembleVertices();
 	void removeUnusedVertices();
 
+	void initArrays();
+	void convertDataToArrays();
+	void convertIndicesListToArray();
+
 	std::shared_ptr<Vertex> processVertex(int positionIndex, int normalsIndex, int texureIndex);
 	std::shared_ptr<Vertex> dealWithAlreadyProcessedVertex(std::shared_ptr<Vertex>& previousVertex, int newTextureIndex, int newNormalIndex);
-
-	float convertDataToArrays();
-	std::vector<int> convertIndicesListToArray();
 };

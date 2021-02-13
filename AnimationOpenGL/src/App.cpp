@@ -42,14 +42,7 @@ double lastY = SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
 // settings
-// use F1, F2, F3
-bool flag = false; 
-
-// triangles size = SIZE / VERTEX_COUNT
-constexpr unsigned int VERTEX_COUNT = 200;
-constexpr float VERTEX_SIZE = 10.0f;
-
-
+// use F1, F2
 
 
 int main()
@@ -103,6 +96,41 @@ int main()
 	
 
 
+
+
+	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
+
+	std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+
+
+	//TODO: Check if XMLNode does need copy/move constructor/=operator
+	//TODO: Change to std::vector<XMLNode*>*
+
+	std::cout << std::string(50, '-') << std::endl;
+	std::string str = root->getChild("library_geometries")->getChild("geometry")->getChild("mesh")->getChild("source")->getChild("float_array")->getAttribute("count");
+	std::cout << str << std::endl;
+
+
+	MeshData md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(999999)).extractModelData();
+
+	
+	std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
+	VAO->Bind();
+	OpenGLBufferLayout layout{ {ShaderDataType::Float3, "aPos"} };
+	std::shared_ptr<OpenGLVertexBuffer> VBO = std::make_shared<OpenGLVertexBuffer>(md.getVertices().get(), md.getVertexCount() * sizeof(float));
+	VBO->SetLayout(layout);
+	std::shared_ptr <OpenGLIndexBuffer> EBO = std::make_shared<OpenGLIndexBuffer>(md.getIndices().get(), md.getVertexCount() / 3);
+
+	VAO->AddVertexBuffer(VBO);
+	VAO->SetIndexBuffer(EBO);
+
+	VAO->Unbind();
+
+	// PLEASE REMOVE 
+	// VertexSkinData defualt ctor after SkinDataLoader is ready
+	// PLEASE REMOVE
+	
+	/*
 	float positions[] = {
 	0.0f,  1.0f, 1.0f,
    -1.0f, -1.0f, 0.0f, 
@@ -111,23 +139,10 @@ int main()
 	unsigned int indices[] = {
 		0, 1, 2,
 	};
-
-	//Parser p;
-
-	std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
-	VAO->Bind();
-	OpenGLBufferLayout layout{ {ShaderDataType::Float3, "aPos"} };
-	std::shared_ptr<OpenGLVertexBuffer> VBO = std::make_shared<OpenGLVertexBuffer>(positions, 9 * sizeof(float));
-	VBO->SetLayout(layout);
-	std::shared_ptr <OpenGLIndexBuffer> EBO = std::make_shared<OpenGLIndexBuffer>(indices, 3);
-	
-	VAO->AddVertexBuffer(VBO);
-	VAO->SetIndexBuffer(EBO);
-
-	VAO->Unbind();
-
+	*/
 	/*
-	
+	glDisable(GL_CULL_FACE);
+
 	unsigned VBO, EBO, VAO;
 
 	glGenVertexArrays(1, &VAO);
@@ -137,35 +152,16 @@ int main()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER,  9 * sizeof(float), positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER,  md.getVertexCount() * sizeof(float), md.getVertices().get(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (md.getVertexCount() / 3) * sizeof(unsigned int), md.getIndices().get(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	*/
 
-	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
-
-	std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 	
-
-	//TODO: Check if XMLNode does need copy/move constructor/=operator
-	//TODO: Change to std::vector<XMLNode*>*
-
-	std::cout << std::string(50, '-') << std::endl;
-	std::string str = root->getChild("library_geometries")->getChild("geometry")->getChild("mesh")->getChild("source")->getChild("float_array")->getAttribute("count");
-	std::cout << str << std::endl;
-
-	
-	MeshData md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(999999)).extractModelData();
-
-	// PLEASE REMOVE 
-	// VertexSkinData defualt ctor after SkinDataLoader is ready
-	// PLEASE REMOVE
-
-
 	root = nullptr;
 	// configure global opengl state
 	// -----------------------------
@@ -186,8 +182,6 @@ int main()
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
 
-		flag = false;
-
 		// input
 		// -----
 		processInput(window, deltaTime);
@@ -199,9 +193,12 @@ int main()
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 model = glm::mat4(1.0f);
+		ourShader.setMat4("model", model);
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
 
+		//glBindVertexArray(VAO);
 		VAO->Bind();
 		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
 
@@ -252,7 +249,9 @@ void processInput(GLFWwindow* window, double deltaTime)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	if (glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS)
-		flag = true;
+		glCullFace(GL_FRONT);
+	if (glfwGetKey(window, GLFW_KEY_F4) == GLFW_PRESS)
+		glCullFace(GL_BACK);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

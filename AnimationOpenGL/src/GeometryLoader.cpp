@@ -29,6 +29,13 @@ MeshData GeometryLoader::extractModelData()
 	convertDataToArrays();
 	convertIndicesListToArray();
 
+	for (int i = 0; i < m_verticesArray.size() / 3; i++)
+	{
+		std::cout << m_verticesArray[i * 3 + 0] << ' '
+			<< m_verticesArray[i * 3 + 1] << ' '
+			<< m_verticesArray[i * 3 + 2] << '\n';
+	}
+
 	return MeshData(m_verticesArray, m_texturesArray, m_normalsArray, m_indicesArray, m_jointIDsArray, m_weightsArray);
 }
 
@@ -104,11 +111,11 @@ void GeometryLoader::assembleVertices()
 	int typeCount = poly->getChildren("input")->size();
 	std::vector<std::string> indexData = split(poly->getChild("p")->getData(), ' ');
 
-	//for (const auto& vertex : m_vertices)
-	//{
-	//	vertex->debugPrint();
-	//}
+	// typeCount should be equal to 4 becouse
+	// we have an vertex, normal, texture and color index
+	std::cout << "Type count: " << typeCount << std::endl;
 
+	// we only care about vertex, normal, texture index
 	for (size_t i = 0; i < indexData.size() / typeCount; i++) {
 		int positionIndex = std::stoi(indexData[i * typeCount + 0]);
 		int normalIndex   =	std::stoi(indexData[i * typeCount + 1]);
@@ -177,16 +184,12 @@ void GeometryLoader::initArrays()
 	m_weightsArray .resize(m_vertices.size() * 3);
 }
 
-float GeometryLoader::convertDataToArrays()
+void GeometryLoader::convertDataToArrays()
 {
-	float furthestPoint = 0;
 	for (size_t i = 0; i < m_vertices.size(); i++)
 	{
 		std::shared_ptr<Vertex> currentVertex = m_vertices.at(i);
-		if (currentVertex->getLength() > furthestPoint)
-		{
-			furthestPoint = currentVertex->getLength();
-		}
+
 		glm::vec3 position = currentVertex->getPosition();
 		glm::vec2 textureCoord = m_textures[currentVertex->getTextureIndex()];
 		glm::vec3 normalVector = m_normals[currentVertex->getNormalIndex()];
@@ -211,15 +214,13 @@ float GeometryLoader::convertDataToArrays()
 		m_weightsArray[i * 3 + 1] = weights.weights[1];
 		m_weightsArray[i * 3 + 2] = weights.weights[2];
 	}
-	return furthestPoint;
 }
 
-std::vector<int> GeometryLoader::convertIndicesListToArray()
+void GeometryLoader::convertIndicesListToArray()
 {
 	m_indicesArray.resize(m_indices.size());
 	for (size_t i = 0; i < m_indicesArray.size(); i++)
 	{
 		m_indicesArray[i] = m_indices[i];
 	}
-	return m_indicesArray;
 }
