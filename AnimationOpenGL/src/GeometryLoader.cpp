@@ -20,6 +20,7 @@ MeshData GeometryLoader::extractModelData()
 	readPositions();
 	readNormals();
 	readTextureCoords();
+	std::cout << "Without duplicated vertices deleted: " << m_vertices.size() << std::endl;
 
 	// Transforming data
 
@@ -29,12 +30,8 @@ MeshData GeometryLoader::extractModelData()
 	convertDataToArrays();
 	convertIndicesListToArray();
 
-	for (int i = 0; i < m_verticesArray.size() / 3; i++)
-	{
-		std::cout << m_verticesArray[i * 3 + 0] << ' '
-			<< m_verticesArray[i * 3 + 1] << ' '
-			<< m_verticesArray[i * 3 + 2] << '\n';
-	}
+	// DEBUG ONLY
+	std::cout << "In extractModelData: " << m_verticesArray.size() << std::endl;
 
 	return MeshData(m_verticesArray, m_texturesArray, m_normalsArray, m_indicesArray, m_jointIDsArray, m_weightsArray);
 }
@@ -45,7 +42,7 @@ void GeometryLoader::readPositions()
 	std::shared_ptr<XMLNode> positionsData = m_meshData->getChildWithAttribute("source", "id", positionsID)->getChild("float_array");
 
 	int count = std::stoi(positionsData->getAttribute("count"));
-
+	// TODO: optimize this line becouse we know the count of the data
 	std::vector<std::string> posData = split(positionsData->getData(), ' ');
 
 	// count will be always divisible by 3
@@ -56,7 +53,7 @@ void GeometryLoader::readPositions()
 		float z = std::stof(posData[i * 3 + 2]);
 
 		glm::vec4 position(x, y, z, 1.0f);
-		glm::vec4 result = CORRECTION * position;
+		position = CORRECTION * position;
 
 		size_t index = m_vertices.size();
 		m_vertices.emplace_back(std::make_shared<Vertex>(index, glm::vec3(position), m_vertexWeights.at(index)));
@@ -69,6 +66,7 @@ void GeometryLoader::readNormals()
 	std::shared_ptr<XMLNode> normalsData = m_meshData->getChildWithAttribute("source", "id", normalsId)->getChild("float_array");
 
 	int count = std::stoi(normalsData->getAttribute("count"));
+	// TODO: optimize this line becouse we know the count of the data
 	std::vector<std::string> normData = split(normalsData->getData(), ' ');
 
 	// count will be always divisible by 3
@@ -92,6 +90,7 @@ void GeometryLoader::readTextureCoords()
 	std::shared_ptr<XMLNode> texCoordsData = m_meshData->getChildWithAttribute("source", "id", texCoordsId)->getChild("float_array");
 
 	int count = std::stoi(texCoordsData->getAttribute("count"));
+	// TODO: optimize this line becouse we know the count of the data
 	std::vector<std::string> textureData = split(texCoordsData->getData(), ' ');
 
 	// count will be always divisible by 2
@@ -154,6 +153,7 @@ std::shared_ptr<Vertex> GeometryLoader::dealWithAlreadyProcessedVertex(std::shar
 		else
 		{
 			std::shared_ptr<Vertex> duplicateVertex = std::make_shared<Vertex>(m_vertices.size(), previousVertex->getPosition(), previousVertex->getWeightsData());
+
 			duplicateVertex->setTextureIndex(newTextureIndex);
 			duplicateVertex->setNormalIndex(newNormalIndex);
 			previousVertex->setDuplicateVertex(duplicateVertex);

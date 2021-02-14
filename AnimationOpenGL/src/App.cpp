@@ -4,6 +4,8 @@
 #include "vendor/glm/glm/glm.hpp"
 #include "vendor/glm/glm/gtc/matrix_transform.hpp"
 
+#include "vendor/stb_image/stb_image.h"
+
 #include "Shader.h"
 #include "Camera.h"
 
@@ -19,10 +21,13 @@
 #include "GeometryLoader.h"
 #include "VertexSkinData.h"
 
+
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window, double deltaTime);
+unsigned int loadTexture(char const* path);
 
 void APIENTRY OpenGLMessageCallback(GLenum source,
 	GLenum type,
@@ -41,7 +46,6 @@ double lastX = SCR_WIDTH / 2.0;
 double lastY = SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
-// settings
 // use F1, F2
 
 
@@ -81,7 +85,7 @@ int main()
 		std::puts("Failed to initialize GLAD");
 		return -1;
 	}
-	
+
 
 
 	glEnable(GL_DEBUG_OUTPUT);
@@ -93,9 +97,6 @@ int main()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_DEPTH_TEST);
-	
-
-
 
 
 	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
@@ -112,70 +113,102 @@ int main()
 
 
 	MeshData md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(999999)).extractModelData();
+	std::cout << "MeshData count in App.cpp " << md.getVertexCount() << std::endl;
 
-	
-	std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
+
+
+	for (size_t i = 0; i < md.getIndicesCount(); i++)
+	{
+		std::cout << md.getIndices()[i] << std::endl;
+	}
+
+	/*std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
 	VAO->Bind();
-	OpenGLBufferLayout layout{ {ShaderDataType::Float3, "aPos"} };
-	std::shared_ptr<OpenGLVertexBuffer> VBO = std::make_shared<OpenGLVertexBuffer>(md.getVertices().get(), md.getVertexCount() * sizeof(float));
+
+	OpenGLBufferLayout layout{ {ShaderDataType::Float3, "in_position"},
+							   {ShaderDataType::Float2, "in_textureCoords"},
+							   {ShaderDataType::Float3, "in_normal"}};
+
+	std::shared_ptr<OpenGLVertexBuffer> VBO = std::make_shared<OpenGLVertexBuffer>(md.getVertices().get(), md.getVertexCount() * 3 * sizeof(float));
 	VBO->SetLayout(layout);
-	std::shared_ptr <OpenGLIndexBuffer> EBO = std::make_shared<OpenGLIndexBuffer>(md.getIndices().get(), md.getVertexCount() / 3);
+	std::shared_ptr <OpenGLIndexBuffer> EBO = std::make_shared<OpenGLIndexBuffer>(md.getIndices().get(), md.getVertexCount());
 
 	VAO->AddVertexBuffer(VBO);
 	VAO->SetIndexBuffer(EBO);
+	VAO->
 
 	VAO->Unbind();
+	*/
 
+
+	// TODO:
 	// PLEASE REMOVE 
 	// VertexSkinData defualt ctor after SkinDataLoader is ready
 	// PLEASE REMOVE
-	
-	/*
-	float positions[] = {
-	0.0f,  1.0f, 1.0f,
-   -1.0f, -1.0f, 0.0f, 
-	1.0f, -1.0f, 0.0f
-	};
-	unsigned int indices[] = {
-		0, 1, 2,
-	};
-	*/
-	/*
-	glDisable(GL_CULL_FACE);
 
-	unsigned VBO, EBO, VAO;
+
+
+	// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
+	// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state. 
+
+	//glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+	//glBufferData(GL_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+
+
+	unsigned vertexVBO, textureCoordsVBO, normalsVBO, EBO, VAO;
 
 	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	glCreateBuffers(1, &vertexVBO);
+	glCreateBuffers(1, &textureCoordsVBO);
+	glCreateBuffers(1, &normalsVBO);
+	glCreateBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER,  md.getVertexCount() * sizeof(float), md.getVertices().get(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
+	glBufferData(GL_ARRAY_BUFFER, md.getVertexCount() * 3 * sizeof(float), md.getVertices().get(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, textureCoordsVBO);
+	glBufferData(GL_ARRAY_BUFFER, md.getVertexCount() * 2 * sizeof(float), md.getTextureCoords().get(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, normalsVBO);
+	glBufferData(GL_ARRAY_BUFFER, md.getVertexCount() * 3 * sizeof(float), md.getNormals().get(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (md.getVertexCount() / 3) * sizeof(unsigned int), md.getIndices().get(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, md.getIndicesCount() * sizeof(uint32_t), md.getIndices().get(), GL_STATIC_DRAW);
 
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	*/
 
-	
+	glBindBuffer(GL_ARRAY_BUFFER, textureCoordsVBO);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, normalsVBO);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(2);
+
+	unsigned int modelDiffuse = loadTexture(R"(AnimationOpenGL/res/models/cowboy/diffuse.png)");
+
+
 	root = nullptr;
 	// configure global opengl state
 	// -----------------------------
 
 	ourShader.use();
+	ourShader.setInt("diffuseMap", 0);
+	ourShader.setVec3("lightDirection", glm::vec3(0.2f, -0.3f, -0.8f));
 
 	// timing
 	double deltaTime = 0.0f;
 	double lastFrame = 0.0f;
-	
+
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
-	{	
+	{
 		// per-frame time logic
 		// --------------------
 		double currentFrame = glfwGetTime();
@@ -191,16 +224,18 @@ int main()
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		ourShader.use();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
-		glm::mat4 model = glm::mat4(1.0f);
-		ourShader.setMat4("model", model);
-		ourShader.setMat4("projection", projection);
-		ourShader.setMat4("view", view);
+		ourShader.setMat4("projectionViewMatrix", projection * view);
 
-		//glBindVertexArray(VAO);
-		VAO->Bind();
-		glDrawElements(GL_TRIANGLES, VAO->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+		// bind diffuse map
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, modelDiffuse);
+
+		glBindVertexArray(VAO);
+		//VAO->Bind();
+		glDrawElements(GL_TRIANGLES, md.getIndicesCount(), GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -209,15 +244,17 @@ int main()
 	// optional: de-allocate all resources once they've outlived their purpose:
 	// ------------------------------------------------------------------------
 
-	//glDeleteBuffers(1, &VBO);
-	//glDeleteBuffers(1, &EBO);
-	//glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &vertexVBO);
+	glDeleteBuffers(1, &textureCoordsVBO);
+	glDeleteBuffers(1, &normalsVBO);
+	glDeleteBuffers(1, &EBO);
+	glDeleteVertexArrays(1, &VAO);
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glfwTerminate();
 
-	
+
 	return 0;
 }
 
@@ -270,8 +307,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	if (firstMouse)
 	{
-		lastX =	xpos;
-		lastY =	ypos;
+		lastX = xpos;
+		lastY = ypos;
 		firstMouse = false;
 	}
 
@@ -336,4 +373,43 @@ void APIENTRY OpenGLMessageCallback(GLenum source,
 	case GL_DEBUG_SEVERITY_NOTIFICATION: std::puts("Severity: notification");	break;
 	}
 	std::puts("");
+}
+
+unsigned int loadTexture(char const* path)
+{
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+
+	int width, height, nrComponents;
+	unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
+	if (data)
+	{
+		GLenum format;
+		if (nrComponents == 1)
+			format = GL_RED;
+		else if (nrComponents == 3)
+			format = GL_RGB;
+		else if (nrComponents == 4)
+			format = GL_RGBA;
+		else
+			format = GL_RGB;
+
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(data);
+	}
+	else
+	{
+		std::cout << "Texture failed to load at path: " << path << '\n';
+		stbi_image_free(data);
+	}
+
+	return textureID;
 }

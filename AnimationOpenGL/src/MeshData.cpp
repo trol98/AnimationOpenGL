@@ -3,7 +3,8 @@
 
 MeshData::MeshData(const std::vector<float>& v, const std::vector<float>& t, const std::vector<float>& n,
 	const std::vector<int>& in, const std::vector<int>& IDs, const std::vector<float>& w)
-	:m_count(v.size()), 
+	:m_vertexCount(v.size()),
+	 m_indicesCount(in.size()),
 	 m_vertices(new float[v.size()]),
 	 m_textureCoords(new float[t.size()]),
 	 m_normals(new float[n.size()]),
@@ -41,7 +42,7 @@ std::shared_ptr<float[]> MeshData::getVertices()
 {
 	return m_vertices;
 }
-std::shared_ptr <unsigned int[]> MeshData::getIndices()
+std::shared_ptr <uint32_t[]> MeshData::getIndices()
 {
 	return m_indices;
 }
@@ -61,7 +62,11 @@ std::shared_ptr <int[]> MeshData::getJointIds()
 {
 	return m_jointIDs;
 }
-int MeshData::getVertexCount()
+size_t MeshData::getVertexCount()
 {
-	return m_count / 3;
+	return m_vertexCount / 3;
+}
+size_t MeshData::getIndicesCount()
+{
+	return m_indicesCount;
 }
