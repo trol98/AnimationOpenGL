@@ -41,7 +41,7 @@ constexpr unsigned SCR_WIDTH = 1920;
 constexpr unsigned SCR_HEIGHT = 1440;
 
 // camera
-Camera camera(glm::vec3(-3.0f, 3.0f, 5.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
 double lastX = SCR_WIDTH / 2.0;
 double lastY = SCR_HEIGHT / 2.0;
 bool firstMouse = true;
@@ -93,8 +93,8 @@ int main()
 	glDebugMessageCallback(OpenGLMessageCallback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -114,13 +114,6 @@ int main()
 
 	MeshData md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(999999)).extractModelData();
 	std::cout << "MeshData count in App.cpp " << md.getVertexCount() << std::endl;
-
-
-
-	for (size_t i = 0; i < md.getIndicesCount(); i++)
-	{
-		std::cout << md.getIndices()[i] << std::endl;
-	}
 
 	/*std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
 	VAO->Bind();
@@ -146,15 +139,6 @@ int main()
 	// VertexSkinData defualt ctor after SkinDataLoader is ready
 	// PLEASE REMOVE
 
-
-
-	// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
-	// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state. 
-
-	//glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-	//glBufferData(GL_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
-
-
 	unsigned vertexVBO, textureCoordsVBO, normalsVBO, EBO, VAO;
 
 	glGenVertexArrays(1, &VAO);
@@ -175,7 +159,7 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, md.getVertexCount() * 3 * sizeof(float), md.getNormals().get(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, md.getIndicesCount() * sizeof(uint32_t), md.getIndices().get(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, md.getIndicesCount() * sizeof(unsigned int), md.getIndices().get(), GL_STATIC_DRAW);
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
@@ -194,8 +178,6 @@ int main()
 
 
 	root = nullptr;
-	// configure global opengl state
-	// -----------------------------
 
 	ourShader.use();
 	ourShader.setInt("diffuseMap", 0);
@@ -235,6 +217,7 @@ int main()
 
 		glBindVertexArray(VAO);
 		//VAO->Bind();
+		//glPointSize(16.0f);
 		glDrawElements(GL_TRIANGLES, md.getIndicesCount(), GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
