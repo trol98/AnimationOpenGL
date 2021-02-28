@@ -18,10 +18,10 @@ AnimatedModelData ColladaLoader::loadColladaModel(const std::string path, int ma
 	std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile(path);
 
 	SkinLoader* skinLoader = new SkinLoader(root->getChild("library_controllers"), maxWeights);
-	SkinningData skinningData = skinLoader.extractSkinData();
+	SkinningData* skinningData = skinLoader.extractSkinData();
 
 	SkeletonLoader* jointsLoader = new SkeletonLoader(root->getChild("library_visual_scenes"), skinningData.jointOrder);
-	SkeletonData jointsData = jointsLoader.extractBoneData();
+	SkeletonData* jointsData = jointsLoader.extractBoneData();
 
 	GeometryLoader* g = new GeometryLoader(root->getChild("library_geometries"), skinningData.verticesSkinData);
 	MeshData meshData = g->extractModelData();
