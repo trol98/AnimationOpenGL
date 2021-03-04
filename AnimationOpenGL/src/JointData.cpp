@@ -5,7 +5,7 @@ JointData::JointData(int index, const std::string& nameID, const glm::mat4& bind
 {
 }
 
-void JointData::addChild(const JointData& child)
+void JointData::addChild(JointData* child)
 {
 	children.emplace_back(child);
 }

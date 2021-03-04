@@ -12,14 +12,11 @@
 #include <ctime>
 #include <iostream>
 
-#include "OpenGLBuffer.h"
-#include "OpenGLBufferLayout.h"
-#include "OpenGLVertexArray.h"
+//#include "OpenGLBuffer.h"
+//#include "OpenGLBufferLayout.h"
+//#include "OpenGLVertexArray.h"
 
-#include "XMLParser.h"
-#include "MeshData.h"
-#include "GeometryLoader.h"
-#include "VertexSkinData.h"
+#include "ColladaLoader.h"
 
 
 
@@ -101,20 +98,19 @@ int main()
 
 	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
 
-	std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+	//std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 
 
 	//TODO: Check if XMLNode does need copy/move constructor/=operator
 	//TODO: Change to std::vector<XMLNode*>*
 
-	std::cout << std::string(50, '-') << std::endl;
-	std::string str = root->getChild("library_geometries")->getChild("geometry")->getChild("mesh")->getChild("source")->getChild("float_array")->getAttribute("count");
-	std::cout << str << std::endl;
 
 
-	MeshData md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(999999)).extractModelData();
-	std::cout << "MeshData count in App.cpp " << md.getVertexCount() << std::endl;
+	//MeshData* md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(999999)).extractModelData();
+	//std::cout << "MeshData count in App.cpp " << md->getVertexCount() << std::endl;
 
+	AnimatedModelData* amd = ColladaLoader::loadColladaModel("AnimationOpenGL/res/models/cowboy/cowboy.dae", 3);
+	const MeshData* md = amd->getMeshData();
 	/*std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
 	VAO->Bind();
 
@@ -150,16 +146,16 @@ int main()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
-	glBufferData(GL_ARRAY_BUFFER, md.getVertexCount() * 3 * sizeof(float), md.getVertices().get(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, md->getVertexCount() * 3 * sizeof(float), md->getVertices().get(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, textureCoordsVBO);
-	glBufferData(GL_ARRAY_BUFFER, md.getVertexCount() * 2 * sizeof(float), md.getTextureCoords().get(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, md->getVertexCount() * 2 * sizeof(float), md->getTextureCoords().get(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, normalsVBO);
-	glBufferData(GL_ARRAY_BUFFER, md.getVertexCount() * 3 * sizeof(float), md.getNormals().get(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, md->getVertexCount() * 3 * sizeof(float), md->getNormals().get(), GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, md.getIndicesCount() * sizeof(unsigned int), md.getIndices().get(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, md->getIndicesCount() * sizeof(unsigned int), md->getIndices().get(), GL_STATIC_DRAW);
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
@@ -175,9 +171,6 @@ int main()
 	glEnableVertexAttribArray(2);
 
 	unsigned int modelDiffuse = loadTexture(R"(AnimationOpenGL/res/models/cowboy/diffuse.png)");
-
-
-	root = nullptr;
 
 	ourShader.use();
 	ourShader.setInt("diffuseMap", 0);
@@ -214,11 +207,10 @@ int main()
 		// bind diffuse map
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, modelDiffuse);
-
 		glBindVertexArray(VAO);
 		//VAO->Bind();
 		//glPointSize(16.0f);
-		glDrawElements(GL_TRIANGLES, md.getIndicesCount(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, md->getIndicesCount(), GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -236,7 +228,6 @@ int main()
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glfwTerminate();
-
 
 	return 0;
 }

@@ -1,7 +1,7 @@
 #include "SkinLoader.h"
 
-SkinLoader::SkinLoader(const XMLNode& controllerNode, int maxWeights)
-	:m_skinningData(controllerNode.getChild("controller")->getChild("skin")), m_maxWeights(maxWeights)
+SkinLoader::SkinLoader(const std::shared_ptr<XMLNode>& controllerNode, int maxWeights)
+	:m_skinningData(controllerNode->getChild("controller")->getChild("skin")), m_maxWeights(maxWeights)
 {
 }
 
@@ -44,7 +44,7 @@ float* SkinLoader::loadWeights()
 
 	// TODO: Consider changing this to std::shared_ptr ?
 	float* weights = new float[rawData.size()];
-	for (int i = 0; i < rawData.size(); i++)
+	for (size_t i = 0; i < rawData.size(); i++)
 	{
 		weights[i] = std::stof(rawData[i]);
 	}
@@ -57,7 +57,7 @@ std::vector<int> SkinLoader::getEffectiveJointsCount(const std::shared_ptr<XMLNo
 	std::vector<std::string> rawData = split(weightsDataNode->getChild("vcount")->getData(), ' ');
 
 	std::vector<int> counts(rawData.size());
-	for (int i = 0; i < rawData.size(); i++)
+	for (size_t i = 0; i < rawData.size(); i++)
 	{
 		counts[i] = std::stoi(rawData[i]);
 	}

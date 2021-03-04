@@ -82,5 +82,8 @@ tests/title
 tests/triangle-vulkan
 tests/windows
 
-#PNG files
-*.png
+# PNG files
+# When a screenshot from the application will be added
+# It should be ignored during cloning
+# But we also don't want to exclude any texture files for your models
+#*.png

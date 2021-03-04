@@ -19,14 +19,14 @@ public:
 	MeshData(const std::vector<float>& v, const std::vector<float>& t, const std::vector<float>& n,
 		const std::vector<int>& i, const std::vector<int>& IDs, const std::vector<float>& w);
 
-	std::shared_ptr <float[]> getVertices();
-	std::shared_ptr <uint32_t[]> getIndices ();
-	std::shared_ptr <float[]> getNormals ();
-	std::shared_ptr <float[]> getTextureCoords ();
-	std::shared_ptr <float[]> getVertexWeights ();
-	std::shared_ptr <int[]> getJointIds();
+	std::shared_ptr <float[]> getVertices() const;
+	std::shared_ptr <uint32_t[]> getIndices() const;
+	std::shared_ptr <float[]> getNormals() const;
+	std::shared_ptr <float[]> getTextureCoords() const;
+	std::shared_ptr <float[]> getVertexWeights() const;
+	std::shared_ptr <int[]> getJointIds() const;
 
-	size_t getVertexCount();
-	size_t getIndicesCount();
+	size_t getVertexCount() const;
+	size_t getIndicesCount() const;
 
 };

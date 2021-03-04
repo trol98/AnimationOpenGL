@@ -8,7 +8,6 @@ public:
 	std::vector<int> jointIDs;
 	std::vector<float> weights;
 
-	VertexSkinData(); // please delete this after SkinDataLoader is complete
 	void addJointEffect(int jointID, float weight);
 	void limitJointNumber(size_t max);
 private:

@@ -11,9 +11,9 @@ public:
 	const std::string nameID;
 	const glm::mat4 bindLocalTransform;
 
-	std::vector<JointData> children;
+	std::vector<JointData*> children;
 
 	JointData(int index, const std::string& nameID, const glm::mat4& bindLocalTransform);
 
-	void addChild(const JointData& child);
+	void addChild(JointData* child);
 };

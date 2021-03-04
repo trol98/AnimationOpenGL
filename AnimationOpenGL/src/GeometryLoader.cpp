@@ -13,14 +13,13 @@ GeometryLoader::GeometryLoader(const std::shared_ptr<XMLNode>& geometryNode, con
 {
 }
 
-MeshData GeometryLoader::extractModelData()
+MeshData* GeometryLoader::extractModelData()
 {
 	// Raw data
 
 	readPositions();
 	readNormals();
 	readTextureCoords();
-	std::cout << "Without duplicated vertices deleted: " << m_vertices.size() << std::endl;
 
 	// Transforming data
 
@@ -30,10 +29,7 @@ MeshData GeometryLoader::extractModelData()
 	convertDataToArrays();
 	convertIndicesListToArray();
 
-	// DEBUG ONLY
-	std::cout << "In extractModelData: " << m_verticesArray.size() << std::endl;
-
-	return MeshData(m_verticesArray, m_texturesArray, m_normalsArray, m_indicesArray, m_jointIDsArray, m_weightsArray);
+	return new MeshData(m_verticesArray, m_texturesArray, m_normalsArray, m_indicesArray, m_jointIDsArray, m_weightsArray);
 }
 
 void GeometryLoader::readPositions()
@@ -112,7 +108,7 @@ void GeometryLoader::assembleVertices()
 
 	// typeCount should be equal to 4 becouse
 	// we have an vertex, normal, texture and color index
-	std::cout << "Type count: " << typeCount << std::endl;
+	//std::cout << "Type count: " << typeCount << '\n';
 
 	// we only care about vertex, normal, texture index
 	for (size_t i = 0; i < indexData.size() / typeCount; i++) {

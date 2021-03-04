@@ -34,7 +34,7 @@ private:
 	static const glm::mat4 CORRECTION;
 public:
 	GeometryLoader(const std::shared_ptr<XMLNode>& geometryNode, const std::vector<VertexSkinData>& vertexWeights);
-	MeshData extractModelData();
+	MeshData* extractModelData();
 private:
 	void readPositions();
 	void readNormals();

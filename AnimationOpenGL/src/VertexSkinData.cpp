@@ -2,11 +2,11 @@
 
 #include <algorithm> 
 
-VertexSkinData::VertexSkinData()
-{
-	jointIDs.resize(3);// DEBUG ONLY
-	weights.resize(3); // DEBUG ONLY
-}
+//VertexSkinData::VertexSkinData()
+//{
+//	jointIDs.resize(3);// DEBUG ONLY
+//	weights.resize(3); // DEBUG ONLY
+//}
 
 void VertexSkinData::addJointEffect(int jointID, float weight)
 {

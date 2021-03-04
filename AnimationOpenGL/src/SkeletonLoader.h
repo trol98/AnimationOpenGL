@@ -16,7 +16,7 @@ public:
 	SkeletonLoader(const std::shared_ptr<XMLNode>& visualSceneNode, std::vector<std::string> boneOrder);
 	SkeletonData* extractBoneData();
 private:
-	JointData loadJointData(const std::shared_ptr<XMLNode>& jointNode, bool isRoot);
-	JointData extractMainJointData(const std::shared_ptr<XMLNode>& jointNode, bool isRoot);
+	JointData* loadJointData(const std::shared_ptr<XMLNode>& jointNode, bool isRoot);
+	JointData* extractMainJointData(const std::shared_ptr<XMLNode>& jointNode, bool isRoot);
 	glm::mat4 convertData(const std::vector<std::string>& rawData);
 };

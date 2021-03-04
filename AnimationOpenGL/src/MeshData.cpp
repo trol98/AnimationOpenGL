@@ -38,35 +38,35 @@ MeshData::MeshData(const std::vector<float>& v, const std::vector<float>& t, con
 	}
 
 }
-std::shared_ptr<float[]> MeshData::getVertices()
+std::shared_ptr<float[]> MeshData::getVertices() const
 {
 	return m_vertices;
 }
-std::shared_ptr <uint32_t[]> MeshData::getIndices()
+std::shared_ptr <uint32_t[]> MeshData::getIndices() const
 {
 	return m_indices;
 }
-std::shared_ptr <float[]> MeshData::getNormals()
+std::shared_ptr <float[]> MeshData::getNormals() const
 {
 	return m_normals;
 }
-std::shared_ptr <float[]> MeshData::getTextureCoords()
+std::shared_ptr <float[]> MeshData::getTextureCoords() const
 {
 	return m_textureCoords;
 }
-std::shared_ptr <float[]> MeshData::getVertexWeights()
+std::shared_ptr <float[]> MeshData::getVertexWeights() const
 {
 	return m_vertexWeights;
 }
-std::shared_ptr <int[]> MeshData::getJointIds()
+std::shared_ptr <int[]> MeshData::getJointIds() const
 {
 	return m_jointIDs;
 }
-size_t MeshData::getVertexCount()
+size_t MeshData::getVertexCount() const
 {
 	return m_vertexCount / 3;
 }
-size_t MeshData::getIndicesCount()
+size_t MeshData::getIndicesCount() const
 {
 	return m_indicesCount;
 }

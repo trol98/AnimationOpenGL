@@ -12,7 +12,7 @@ class SkinLoader
 	const int m_maxWeights;
 
 public:
-	SkinLoader(const XMLNode& controllerNode, int maxWeights);
+	SkinLoader(const std::shared_ptr<XMLNode>& controllerNode, int maxWeights);
 	SkinningData* extractSkinData();
 private:
 	float* loadWeights();

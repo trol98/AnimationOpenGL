@@ -1,3 +1,4 @@
+
 #include "ColladaLoader.h"
 
 #include "AnimationLoader.h"
@@ -12,31 +13,35 @@
 
 
 #include <memory>
+#include <iostream>
 
-AnimatedModelData ColladaLoader::loadColladaModel(const std::string path, int maxWeights)
+AnimatedModelData* ColladaLoader::loadColladaModel(const std::string path, int maxWeights)
 {
 	std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile(path);
 
 	SkinLoader* skinLoader = new SkinLoader(root->getChild("library_controllers"), maxWeights);
-	SkinningData* skinningData = skinLoader.extractSkinData();
+	SkinningData* skinningData = skinLoader->extractSkinData();
+	delete skinLoader;
 
-	SkeletonLoader* jointsLoader = new SkeletonLoader(root->getChild("library_visual_scenes"), skinningData.jointOrder);
-	SkeletonData* jointsData = jointsLoader.extractBoneData();
+	SkeletonLoader* jointsLoader = new SkeletonLoader(root->getChild("library_visual_scenes"), skinningData->jointOrder);
+	SkeletonData* jointsData = jointsLoader->extractBoneData();
+	delete jointsLoader;
 
-	GeometryLoader* g = new GeometryLoader(root->getChild("library_geometries"), skinningData.verticesSkinData);
-	MeshData meshData = g->extractModelData();
-
-	delete g;
-
+	GeometryLoader* geometryLoader = new GeometryLoader(root->getChild("library_geometries"), skinningData->verticesSkinData);
+	MeshData* meshData = geometryLoader->extractModelData();
+	delete geometryLoader;
+	
+	root = nullptr;
+	
 	return new AnimatedModelData(meshData, jointsData);
 }
 
-AnimationData ColladaLoader::loadColladaAnimation(const std::string path)
+/*AnimationData*/ void ColladaLoader::loadColladaAnimation(const std::string& path)
 {
-	std::shared_ptr<XMLNode> node = XMLParser::loadXMLFile(path);
-	std::shared_ptr<XMLNode> animationsNode = node->getChild("library_animations");
-	std::shared_ptr<XMLNode> jointsNode = node->getChild("library_visual_scenes");
-	AnimationLoader loader = new AnimationLoader(animationsNode, jointsNode);
-	AnimationData animData = loader.extractAnimation();
-	return animData;
+	//std::shared_ptr<XMLNode> node = XMLParser::loadXMLFile(path);
+	//std::shared_ptr<XMLNode> animationsNode = node->getChild("library_animations");
+	//std::shared_ptr<XMLNode> jointsNode = node->getChild("library_visual_scenes");
+	//AnimationLoader loader = new AnimationLoader(animationsNode, jointsNode);
+	//AnimationData animData = loader.extractAnimation();
+	//return animData;
 }

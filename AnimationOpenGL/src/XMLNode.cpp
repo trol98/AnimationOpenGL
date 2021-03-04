@@ -76,11 +76,16 @@ std::shared_ptr<XMLNode> XMLNode::getChildWithAttribute(const std::string& child
 
 std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>> XMLNode::getChildren(const std::string& name) const
 {
-	if (!(m_childNodes->at(name)->empty()))
+
+	if ((m_childNodes != nullptr) && (m_childNodes->find(name) != m_childNodes->end()))
 	{
-		return m_childNodes->at(name);
+		if (!(m_childNodes->at(name)->empty()))
+		{
+			return m_childNodes->at(name);
+		}
 	}
-	return std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>(nullptr);
+	return std::make_shared<std::vector<std::shared_ptr<XMLNode>>>();
+	//return std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>();
 }
 
 void XMLNode::addAttribute(const std::string& attrib, const std::string& value)
