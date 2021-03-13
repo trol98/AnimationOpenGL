@@ -16,4 +16,6 @@ public:
 	JointData(int index, const std::string& nameID, const glm::mat4& bindLocalTransform);
 
 	void addChild(JointData* child);
+
+	~JointData();
 };

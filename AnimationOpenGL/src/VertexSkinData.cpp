@@ -1,12 +1,6 @@
 #include "VertexSkinData.h"
 
-#include <algorithm> 
-
-//VertexSkinData::VertexSkinData()
-//{
-//	jointIDs.resize(3);// DEBUG ONLY
-//	weights.resize(3); // DEBUG ONLY
-//}
+#include <algorithm>
 
 void VertexSkinData::addJointEffect(int jointID, float weight)
 {

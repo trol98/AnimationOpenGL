@@ -6,10 +6,25 @@
 
 class KeyFrameData
 {
+public:
 	float time;
-	std::vector<JointTransformData> jointTransforms;
+	std::vector<JointTransformData*> jointTransforms;
 
-	KeyFrameData(float time);
+	KeyFrameData()
+		:time(-1.0f), jointTransforms()
+	{}
+	KeyFrameData::KeyFrameData(float time)
+		:jointTransforms(), time(time)
+	{}
 
-	void addJointTransform(const JointTransformData& transform);
+	void KeyFrameData::addJointTransform(JointTransformData* transform)
+	{
+		jointTransforms.emplace_back(transform);
+	}
+
+	~KeyFrameData()
+	{
+		for (size_t i = 0; i < jointTransforms.size(); i++)
+			delete jointTransforms[i];
+	}
 };

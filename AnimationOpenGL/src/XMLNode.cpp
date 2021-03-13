@@ -115,9 +115,7 @@ void XMLNode::addChild(std::shared_ptr<XMLNode>& child)
 	m_childNodes->at(child->getName())->emplace_back(child);
 }
 
-
 // DEBUG ONLY
-
 std::shared_ptr<std::unordered_map<std::string, std::string>>& XMLNode::get_attributes()
 {
 	return m_attributes;

@@ -7,5 +7,5 @@ class ColladaLoader
 {
 public:
 	static AnimatedModelData* loadColladaModel(const std::string path, int maxWeights);
-	static /*AnimationData*/void loadColladaAnimation(const std::string& path);
+	static AnimationData* loadColladaAnimation(const std::string& path);
 };

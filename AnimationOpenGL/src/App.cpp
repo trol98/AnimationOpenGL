@@ -43,8 +43,20 @@ double lastX = SCR_WIDTH / 2.0;
 double lastY = SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
-// use F1, F2
+void debugPrintMatrix(const glm::mat4& matrix)
+{
+	std::cout << std::string(50, '-') << std::endl;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			std::cout << matrix[i][j] << ' ';
+		}
+		std::cout << std::endl;
+	}
+}
 
+// use F1, F2
 
 int main()
 {
@@ -90,9 +102,6 @@ int main()
 	glDebugMessageCallback(OpenGLMessageCallback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	glEnable(GL_DEPTH_TEST);
 
 
@@ -111,6 +120,18 @@ int main()
 
 	AnimatedModelData* amd = ColladaLoader::loadColladaModel("AnimationOpenGL/res/models/cowboy/cowboy.dae", 3);
 	const MeshData* md = amd->getMeshData();
+
+	AnimationData* am = ColladaLoader::loadColladaAnimation("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+
+	for (int i = 0; i < am->keyFrames.size(); i++)
+	{
+		for (int j = 0; j < am->keyFrames[i]->jointTransforms.size(); j++)
+		{
+			std::cout << am->keyFrames[i]->jointTransforms[j]->jointNameID << std::endl;
+			debugPrintMatrix(am->keyFrames[i]->jointTransforms[j]->jointLocalTransform);
+		}
+	}
+	
 	/*std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
 	VAO->Bind();
 
@@ -128,12 +149,6 @@ int main()
 
 	VAO->Unbind();
 	*/
-
-
-	// TODO:
-	// PLEASE REMOVE 
-	// VertexSkinData defualt ctor after SkinDataLoader is ready
-	// PLEASE REMOVE
 
 	unsigned vertexVBO, textureCoordsVBO, normalsVBO, EBO, VAO;
 
@@ -218,6 +233,9 @@ int main()
 
 	// optional: de-allocate all resources once they've outlived their purpose:
 	// ------------------------------------------------------------------------
+	
+	delete am;
+	delete amd;
 
 	glDeleteBuffers(1, &vertexVBO);
 	glDeleteBuffers(1, &textureCoordsVBO);

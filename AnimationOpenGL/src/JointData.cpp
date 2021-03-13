@@ -9,3 +9,11 @@ void JointData::addChild(JointData* child)
 {
 	children.emplace_back(child);
 }
+
+JointData::~JointData()
+{
+	for (int i = 0; i < children.size(); i++)
+	{
+		delete children[i];
+	}
+}
