@@ -49,7 +49,7 @@ std::shared_ptr<XMLNode> XMLParser::loadNode(std::ifstream& file)
 {
 	std::string line;
 	std::getline(file, line);
-	line = trim(line);
+	line = StringUtils::trim(line);
 	
 
 	if (line.rfind(R"(</)", 0) == 0) 
@@ -58,9 +58,9 @@ std::shared_ptr<XMLNode> XMLParser::loadNode(std::ifstream& file)
 	}
 
 	// spliting by space
-	std::vector<std::string> startTagParts = split(getStartTag(line), ' ');
+	std::vector<std::string> startTagParts = StringUtils::split(getStartTag(line), ' ');
 
-	std::shared_ptr<XMLNode> node = std::make_shared<XMLNode>(remove(startTagParts[0], '/'));
+	std::shared_ptr<XMLNode> node = std::make_shared<XMLNode>(StringUtils::remove(startTagParts[0], '/'));
 	
 	//std::cout << node->getName() << std::endl; // ONLY FOR DEBUGGING
 
@@ -92,7 +92,7 @@ void XMLParser::addAttributes(const std::vector<std::string>& titleParts, std::s
 	std::smatch nameMatch, valMatch;
 	for (size_t i = 1; i < titleParts.size(); i++) 
 	{
-			if (contains(titleParts[i],'=')) 
+			if (StringUtils::contains(titleParts[i],'='))
 			{
 				// NOTE: resetting the state of smatch objects is not needed
 

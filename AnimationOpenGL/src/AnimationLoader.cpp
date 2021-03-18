@@ -32,7 +32,7 @@ std::vector<float> AnimationLoader::getKeyTimes()
 {
 	std::shared_ptr<XMLNode> timeData = m_animationData->getChild("animation")->getChild("source")->getChild("float_array");
 	// TODO: Optimize split
-	std::vector<std::string> rawTimesList = split(timeData->getData(), ' ');
+	std::vector<std::string> rawTimesList = StringUtils::split(timeData->getData(), ' ');
 	int listCount = rawTimesList.size();
 
 	std::vector<float> timesList(listCount);
@@ -75,13 +75,13 @@ std::string AnimationLoader::getDataID(const std::shared_ptr<XMLNode>& jointData
 std::string AnimationLoader::getJointName(const std::shared_ptr<XMLNode>& jointData)
 {
 	// TODO: Optimize split
-	return split(jointData->getChild("channel")->getAttribute("target"),'/')[0];
+	return StringUtils::split(jointData->getChild("channel")->getAttribute("target"),'/')[0];
 }
 
 void AnimationLoader::processTransforms(const std::string& jointName, const std::string& rawData, std::vector<KeyFrameData*>& keyFrames, bool root)
 {
 	// TODO: Optimize split
-	std::vector<std::string> rawSplitedData = split(rawData, ' ');
+	std::vector<std::string> rawSplitedData = StringUtils::split(rawData, ' ');
 	glm::mat4 output;
 	for (size_t i = 0; i < keyFrames.size(); i++)
 	{

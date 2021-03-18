@@ -28,7 +28,7 @@ std::vector<std::string> SkinLoader::loadJointsList()
 
 	std::shared_ptr<XMLNode> jointsNode = m_skinningData->getChildWithAttribute("source", "id", jointDataID)->getChild("Name_array");
 
-	std::vector<std::string> names = split(jointsNode->getData(), ' ');
+	std::vector<std::string> names = StringUtils::split(jointsNode->getData(), ' ');
 
 	// TODO: Consider changing names to std::string []
 	return names;
@@ -40,7 +40,7 @@ float* SkinLoader::loadWeights()
 	std::string jointDataID = inputNode->getChildWithAttribute("input", "semantic", "WEIGHT")->getAttribute("source").substr(1);
 
 	std::shared_ptr<XMLNode> weightsNode = m_skinningData->getChildWithAttribute("source", "id", jointDataID)->getChild("float_array");
-	std::vector<std::string> rawData = split(weightsNode->getData(), ' ');
+	std::vector<std::string> rawData = StringUtils::split(weightsNode->getData(), ' ');
 
 	// TODO: Consider changing this to std::shared_ptr ?
 	float* weights = new float[rawData.size()];
@@ -54,7 +54,7 @@ float* SkinLoader::loadWeights()
 
 std::vector<int> SkinLoader::getEffectiveJointsCount(const std::shared_ptr<XMLNode>& weightsDataNode)
 {
-	std::vector<std::string> rawData = split(weightsDataNode->getChild("vcount")->getData(), ' ');
+	std::vector<std::string> rawData = StringUtils::split(weightsDataNode->getChild("vcount")->getData(), ' ');
 
 	std::vector<int> counts(rawData.size());
 	for (size_t i = 0; i < rawData.size(); i++)
@@ -66,7 +66,7 @@ std::vector<int> SkinLoader::getEffectiveJointsCount(const std::shared_ptr<XMLNo
 
 std::vector<VertexSkinData> SkinLoader::getSkinData(const std::shared_ptr<XMLNode>& weightsDataNode, const std::vector<int>& counts, float* weights)
 {
-	std::vector<std::string> rawData = split(weightsDataNode->getChild("v")->getData(), ' ');
+	std::vector<std::string> rawData = StringUtils::split(weightsDataNode->getChild("v")->getData(), ' ');
 	// TODO: Changing this to a raw/shared pointer
 	std::vector<VertexSkinData> skinningData;
 	int pointer = 0;

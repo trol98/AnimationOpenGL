@@ -34,7 +34,7 @@ JointData* SkeletonLoader::extractMainJointData(const std::shared_ptr<XMLNode>& 
 	int index = std::find(m_boneOrder.begin(), m_boneOrder.end(), nameID) - m_boneOrder.begin();
 	assert(index >= 0);
 
-	std::vector<std::string> matrixData = split(jointNode->getChild("matrix")->getData(), ' ');
+	std::vector<std::string> matrixData = StringUtils::split(jointNode->getChild("matrix")->getData(), ' ');
 	glm::mat4 matrix = convertData(matrixData);
 
 	// COLLADA files are row-major and GLSL preffers coloumn-major order

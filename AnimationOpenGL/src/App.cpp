@@ -18,8 +18,6 @@
 
 #include "ColladaLoader.h"
 
-
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -43,21 +41,7 @@ double lastX = SCR_WIDTH / 2.0;
 double lastY = SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
-void debugPrintMatrix(const glm::mat4& matrix)
-{
-	std::cout << std::string(50, '-') << std::endl;
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			std::cout << matrix[i][j] << ' ';
-		}
-		std::cout << std::endl;
-	}
-}
-
 // use F1, F2
-
 int main()
 {
 	std::srand(time(nullptr));
@@ -122,15 +106,6 @@ int main()
 	const MeshData* md = amd->getMeshData();
 
 	AnimationData* am = ColladaLoader::loadColladaAnimation("AnimationOpenGL/res/models/cowboy/cowboy.dae");
-
-	for (int i = 0; i < am->keyFrames.size(); i++)
-	{
-		for (int j = 0; j < am->keyFrames[i]->jointTransforms.size(); j++)
-		{
-			std::cout << am->keyFrames[i]->jointTransforms[j]->jointNameID << std::endl;
-			debugPrintMatrix(am->keyFrames[i]->jointTransforms[j]->jointLocalTransform);
-		}
-	}
 	
 	/*std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
 	VAO->Bind();
@@ -222,9 +197,9 @@ int main()
 		// bind diffuse map
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, modelDiffuse);
-		glBindVertexArray(VAO);
+
 		//VAO->Bind();
-		//glPointSize(16.0f);
+		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, md->getIndicesCount(), GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);

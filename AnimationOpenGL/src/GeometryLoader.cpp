@@ -39,7 +39,7 @@ void GeometryLoader::readPositions()
 
 	int count = std::stoi(positionsData->getAttribute("count"));
 	// TODO: optimize this line becouse we know the count of the data
-	std::vector<std::string> posData = split(positionsData->getData(), ' ');
+	std::vector<std::string> posData = StringUtils::split(positionsData->getData(), ' ');
 
 	// count will be always divisible by 3
 	for (int i = 0; i < count / 3; i++)
@@ -63,7 +63,7 @@ void GeometryLoader::readNormals()
 
 	int count = std::stoi(normalsData->getAttribute("count"));
 	// TODO: optimize this line becouse we know the count of the data
-	std::vector<std::string> normData = split(normalsData->getData(), ' ');
+	std::vector<std::string> normData = StringUtils::split(normalsData->getData(), ' ');
 
 	// count will be always divisible by 3
 	for (int i = 0; i < count / 3; i++)
@@ -87,7 +87,7 @@ void GeometryLoader::readTextureCoords()
 
 	int count = std::stoi(texCoordsData->getAttribute("count"));
 	// TODO: optimize this line becouse we know the count of the data
-	std::vector<std::string> textureData = split(texCoordsData->getData(), ' ');
+	std::vector<std::string> textureData = StringUtils::split(texCoordsData->getData(), ' ');
 
 	// count will be always divisible by 2
 	for (int i = 0; i < count / 2; i++)
@@ -104,7 +104,7 @@ void GeometryLoader::assembleVertices()
 	std::shared_ptr<XMLNode> poly = m_meshData->getChild("polylist");
 
 	int typeCount = poly->getChildren("input")->size();
-	std::vector<std::string> indexData = split(poly->getChild("p")->getData(), ' ');
+	std::vector<std::string> indexData = StringUtils::split(poly->getChild("p")->getData(), ' ');
 
 	// typeCount should be equal to 4 becouse
 	// we have an vertex, normal, texture and color index
