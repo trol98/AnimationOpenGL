@@ -18,13 +18,13 @@ private:
 	glm::mat4 m_localBindTransform;
 	glm::mat4 m_inverseBindTransform;
 public:
-	Joint(int index, const std::string& name, glm::mat4 localBindTransform);
+	Joint(int index, const std::string& name, const glm::mat4& localBindTransform);
 
 	void addJoint(const Joint& joint);
-	void setAnimatedTransform(glm::mat4 animatedTransform);
+	void setAnimatedTransform(const glm::mat4& animatedTransform);
 
 	glm::mat4 getAnimatedTransform() const;
 	glm::mat4 getinverseBindTransform() const;
 private:
-	void calcInverseBindTransform(glm::mat4 parentBindTransform);
+	void calcInverseBindTransform(const glm::mat4& parentBindTransform);
 };
