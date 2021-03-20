@@ -107,6 +107,7 @@ int main()
 
 	AnimationData* am = ColladaLoader::loadColladaAnimation("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 	
+	
 	/*std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
 	VAO->Bind();
 

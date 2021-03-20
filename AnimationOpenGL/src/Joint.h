@@ -25,6 +25,5 @@ public:
 
 	glm::mat4 getAnimatedTransform() const;
 	glm::mat4 getinverseBindTransform() const;
-private:
 	void calcInverseBindTransform(const glm::mat4& parentBindTransform);
 };

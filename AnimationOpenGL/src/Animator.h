@@ -16,8 +16,8 @@ private:
 public:
 	Animator(AnimatedModel* entity);
 	void update(float delta);
-private:
 	void doAnimation(Animation* animation);
+private:
 	void increaseAnimationTime(float delta);
 	void applyPoseToJoints(const std::unordered_map<std::string, glm::mat4>& currentPose, Joint& joint, const glm::mat4& parentTransform);
 	float calculateProgression(const KeyFrame& previousFrame, const KeyFrame& nextFrame);
