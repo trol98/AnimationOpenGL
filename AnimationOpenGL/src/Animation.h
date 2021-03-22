@@ -6,20 +6,28 @@
 class Animation
 {
 private:
-	float m_length;
-	std::vector<KeyFrame> m_keyFrames;
+	const float m_length;
+	const std::vector<KeyFrame*> m_keyFrames;
 public:
-	Animation(float lengthInSeconds, const std::vector<KeyFrame>& frames)
+	Animation(float lengthInSeconds, const std::vector<KeyFrame*>& frames)
 		:m_length(lengthInSeconds), m_keyFrames(frames)
 	{}
 
-	float getLength()
+	float getLength() const 
 	{
 		return m_length;
 	}
 
-	std::vector<KeyFrame> getKeyFrames()
+	std::vector<KeyFrame*> getKeyFrames() const 
 	{
 		return m_keyFrames;
+	}
+
+	~Animation()
+	{
+		for (int i = 0; i < m_keyFrames.size(); i++)
+		{
+			delete m_keyFrames[i];
+		}
 	}
 };
