@@ -10,11 +10,11 @@ glm::mat4 JointTransform::getLocalTransform() const
 	return matrix * glm::toMat4(m_rotation);
 }
 
-JointTransform JointTransform::interpolate(const JointTransform& frameA, const JointTransform& frameB, float progression)
+JointTransform* JointTransform::interpolate(const JointTransform* frameA, const JointTransform* frameB, float progression)
 {
-	glm::vec3 position = interpolate(frameA.m_position, frameB.m_position, progression);
-	glm::quat rotation = glm::lerp(frameA.m_rotation, frameB.m_rotation, progression);
-	return JointTransform(position, rotation);
+	glm::vec3 position = interpolate(frameA->m_position, frameB->m_position, progression);
+	glm::quat rotation = glm::lerp(frameA->m_rotation, frameB->m_rotation, progression);
+	return new JointTransform(position, rotation);
 }
 
 glm::vec3 JointTransform::interpolate(const glm::vec3 start, const glm::vec3 end, float progression)

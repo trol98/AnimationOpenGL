@@ -15,6 +15,8 @@ private:
 
 	const size_t m_vertexCount;
 	const size_t m_indicesCount;
+	const size_t m_jointIDsCount;
+	const size_t m_vertexWeightsCount;
 public:
 	MeshData(const std::vector<float>& v, const std::vector<float>& t, const std::vector<float>& n,
 		const std::vector<int>& i, const std::vector<int>& IDs, const std::vector<float>& w);
@@ -28,5 +30,7 @@ public:
 
 	size_t getVertexCount() const;
 	size_t getIndicesCount() const;
+	size_t getjointIDsCount() const;
+	size_t getvertexWeightsCount() const;
 
 };

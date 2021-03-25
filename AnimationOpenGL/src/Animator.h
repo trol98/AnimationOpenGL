@@ -19,10 +19,10 @@ public:
 	void doAnimation(Animation* animation);
 private:
 	void increaseAnimationTime(float delta);
-	void applyPoseToJoints(const std::unordered_map<std::string, glm::mat4>& currentPose, Joint& joint, const glm::mat4& parentTransform);
-	float calculateProgression(const KeyFrame& previousFrame, const KeyFrame& nextFrame);
+	void applyPoseToJoints(const std::unordered_map<std::string, glm::mat4>& currentPose, Joint* joint, const glm::mat4& parentTransform);
+	float calculateProgression(const KeyFrame* previousFrame, const KeyFrame* nextFrame);
 
-	std::vector<KeyFrame> getPreviousAndNextFrames();
+	std::vector<KeyFrame*> getPreviousAndNextFrames();
 	std::unordered_map<std::string, glm::mat4> calculateCurrentAnimationPos();
-	std::unordered_map<std::string, glm::mat4> interpolatePoses(const KeyFrame& previousFrame, const KeyFrame& nextFrame, float progression);
+	std::unordered_map<std::string, glm::mat4> interpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float progression);
 };

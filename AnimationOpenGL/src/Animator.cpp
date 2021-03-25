@@ -32,59 +32,62 @@ void Animator::increaseAnimationTime(float delta)
 	}
 }
 
-void Animator::applyPoseToJoints(const std::unordered_map<std::string, glm::mat4>& currentPose, Joint& joint, const glm::mat4& parentTransform)
+void Animator::applyPoseToJoints(const std::unordered_map<std::string, glm::mat4>& currentPose, Joint* joint, const glm::mat4& parentTransform)
 {
-	glm::mat4 currentLocalTransform = currentPose.at(joint.Name);
+	glm::mat4 currentLocalTransform = currentPose.at(joint->Name);
 	glm::mat4 currentTransform = parentTransform * currentLocalTransform;
-	for (auto& childJoint : joint.Children)
+	for (auto& childJoint : joint->Children)
 	{
 		applyPoseToJoints(currentPose, childJoint, currentTransform);
 	}
-	currentTransform = currentTransform * joint.getinverseBindTransform();
-	joint.setAnimatedTransform(currentTransform);
+	currentTransform = currentTransform * joint->getinverseBindTransform();
+	joint->setAnimatedTransform(currentTransform);
 }
 
-float Animator::calculateProgression(const KeyFrame& previousFrame, const KeyFrame& nextFrame)
+float Animator::calculateProgression(const KeyFrame* previousFrame, const KeyFrame* nextFrame)
 {
-	float totalTime = nextFrame.getTimeStamp() - previousFrame.getTimeStamp();
-	float currentTime = m_currentAnimationTime - previousFrame.getTimeStamp();
+	float totalTime = nextFrame->getTimeStamp() - previousFrame->getTimeStamp();
+	float currentTime = m_currentAnimationTime - previousFrame->getTimeStamp();
 	return currentTime / totalTime;
 }
 
-std::vector<KeyFrame> Animator::getPreviousAndNextFrames()
+std::vector<KeyFrame*> Animator::getPreviousAndNextFrames()
 {
-	std::vector<KeyFrame> allFrames = m_currentAnimation->getKeyFrames();
-	KeyFrame previousFrame = allFrames[0];
-	KeyFrame nextFrame = allFrames[0];
-	for (int i = 1; i < allFrames.size(); i++)
+	std::vector<KeyFrame*> allFrames = m_currentAnimation->getKeyFrames();
+	KeyFrame* previousFrame = allFrames[0];
+	KeyFrame* nextFrame = allFrames[0];
+	for (size_t i = 1; i < allFrames.size(); i++)
 	{
 		nextFrame = allFrames[i];
-		if (nextFrame.getTimeStamp() > m_currentAnimationTime)
+		if (nextFrame->getTimeStamp() > m_currentAnimationTime)
 		{
 			break;
 		}
 		previousFrame = allFrames[i];
 	}
 
-	return std::vector<KeyFrame> { previousFrame, nextFrame };
+	return std::vector<KeyFrame*> { previousFrame, nextFrame };
 }
 
 std::unordered_map<std::string, glm::mat4> Animator::calculateCurrentAnimationPos()
 {
-	std::vector<KeyFrame> frames = getPreviousAndNextFrames();
+	std::vector<KeyFrame*> frames = getPreviousAndNextFrames();
 	float progression = calculateProgression(frames[0], frames[1]);
 	return interpolatePoses(frames[0], frames[1], progression);
 }
 
-std::unordered_map<std::string, glm::mat4> Animator::interpolatePoses(const KeyFrame& previousFrame, const KeyFrame& nextFrame, float progression)
+std::unordered_map<std::string, glm::mat4> Animator::interpolatePoses(KeyFrame* previousFrame, KeyFrame* nextFrame, float progression)
 {
 	std::unordered_map<std::string, glm::mat4> currentPose;
-	for (const auto& pair : previousFrame.getJointKeyFrames())
+	for (const std::pair<std::string, JointTransform*>& pair : previousFrame->getJointKeyFrames())
 	{
-		JointTransform previousTransform = pair.second;
-		JointTransform nextTransform = nextFrame.getJointKeyFrames[pair.first];
-		JointTransform currentTransform = JointTransform::interpolate(previousTransform, nextTransform, progression);
-		currentPose.emplace(std::pair(pair.first, currentTransform.getLocalTransform()));
+		JointTransform* previousTransform = pair.second;
+		JointTransform* nextTransform = nextFrame->getJointKeyFrames()[pair.first];
+		// TODO: Maybe a small memeory optimization in form of passing an output JointTransform
+		// To the interpolate method
+		JointTransform* currentTransform = JointTransform::interpolate(previousTransform, nextTransform, progression);
+		currentPose.emplace(std::pair(pair.first, currentTransform->getLocalTransform()));
+		delete currentTransform;
 	}
 	return currentPose;
 }

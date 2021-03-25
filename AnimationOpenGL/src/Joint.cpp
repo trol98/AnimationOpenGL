@@ -4,10 +4,10 @@
 
 Joint::Joint(int index, const std::string& name, const glm::mat4& localBindTransform)
 	: Index(index), Name(name), m_localBindTransform(localBindTransform),
-	m_animatedTransform(), m_inverseBindTransform()
+	m_animatedTransform(), m_inverseBindTransform(), Children()
 {}
 
-void Joint::addJoint(const Joint& joint)
+void Joint::addJoint(Joint* joint)
 {
 	Children.emplace_back(joint);
 }
@@ -31,8 +31,16 @@ void Joint::calcInverseBindTransform(const glm::mat4& parentBindTransform)
 {
 	glm::mat4 bindTransform = parentBindTransform * m_localBindTransform;
 	m_inverseBindTransform = glm::inverse(bindTransform);
-	for (auto& child : Children)
+	for (Joint* child : Children)
 	{
-		child.calcInverseBindTransform(bindTransform);
+		child->calcInverseBindTransform(bindTransform);
+	}
+}
+
+Joint::~Joint()
+{
+	for (const Joint* child : Children)
+	{
+		delete child;
 	}
 }

@@ -5,6 +5,8 @@ MeshData::MeshData(const std::vector<float>& v, const std::vector<float>& t, con
 	const std::vector<int>& in, const std::vector<int>& IDs, const std::vector<float>& w)
 	:m_vertexCount(v.size()),
 	 m_indicesCount(in.size()),
+	 m_jointIDsCount(IDs.size()),
+	 m_vertexWeightsCount(w.size()),
 	 m_vertices(new float[v.size()]),
 	 m_textureCoords(new float[t.size()]),
 	 m_normals(new float[n.size()]),
@@ -69,4 +71,14 @@ size_t MeshData::getVertexCount() const
 size_t MeshData::getIndicesCount() const
 {
 	return m_indicesCount;
+}
+
+size_t MeshData::getjointIDsCount() const
+{
+	return m_jointIDsCount;
+}
+
+size_t MeshData::getvertexWeightsCount() const
+{
+	return m_vertexWeightsCount;
 }

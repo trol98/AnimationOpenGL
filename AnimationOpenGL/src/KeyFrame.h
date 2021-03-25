@@ -8,7 +8,7 @@ class KeyFrame
 {
 private:
 	const float m_timeStamp;
-	const std::unordered_map<std::string, JointTransform*> m_pose;
+	std::unordered_map<std::string, JointTransform*> m_pose;
 public:
 	KeyFrame(float timeStamp, const std::unordered_map<std::string, JointTransform*>& jointKeyFrames)
 		:m_timeStamp(timeStamp), m_pose(jointKeyFrames)
@@ -17,7 +17,7 @@ public:
 	{
 		return m_timeStamp;
 	}
-	std::unordered_map<std::string, JointTransform*> getJointKeyFrames() const 
+	std::unordered_map<std::string, JointTransform*> getJointKeyFrames() 
 	{
 		return m_pose;
 	}
@@ -26,7 +26,6 @@ public:
 		for (const auto& elem : m_pose)
 		{
 			delete elem.second;
-			elem.second = nullptr;
 		}
 	}
 };

@@ -17,6 +17,10 @@
 //#include "OpenGLVertexArray.h"
 
 #include "ColladaLoader.h"
+#include "AnimatedModel.h"
+#include "Animation.h"
+#include "AnimatedModelLoader.h"
+#include "AnimationExtracter.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -107,7 +111,12 @@ int main()
 
 	AnimationData* am = ColladaLoader::loadColladaAnimation("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 	
+	AnimatedModel* animatedModel = AnimatedModelLoader::loadEntity("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+	Animation* animation = AnimationExtracter::loadAnimation("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+	animatedModel->doAnimation(animation);
+	animatedModel->update(0.05f);
 	
+	animatedModel->getJointTransforms();
 	/*std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
 	VAO->Bind();
 
@@ -126,12 +135,14 @@ int main()
 	VAO->Unbind();
 	*/
 
-	unsigned vertexVBO, textureCoordsVBO, normalsVBO, EBO, VAO;
+	unsigned vertexVBO, textureCoordsVBO, normalsVBO, jointIDsVBO, vertexWeigthsVBO, EBO, VAO;
 
 	glGenVertexArrays(1, &VAO);
 	glCreateBuffers(1, &vertexVBO);
 	glCreateBuffers(1, &textureCoordsVBO);
 	glCreateBuffers(1, &normalsVBO);
+	glCreateBuffers(1, &jointIDsVBO);
+	glCreateBuffers(1, &vertexWeigthsVBO);
 	glCreateBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
@@ -144,6 +155,15 @@ int main()
 
 	glBindBuffer(GL_ARRAY_BUFFER, normalsVBO);
 	glBufferData(GL_ARRAY_BUFFER, md->getVertexCount() * 3 * sizeof(float), md->getNormals().get(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, jointIDsVBO);
+	glBufferData(GL_ARRAY_BUFFER, md->getjointIDsCount() * sizeof(uint32_t), md->getJointIds().get(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexWeigthsVBO);
+	glBufferData(GL_ARRAY_BUFFER, md->getvertexWeightsCount() * sizeof(float), md->getVertexWeights().get(), GL_STATIC_DRAW);
+
+	md->getJointIds().get();
+	md->getVertexWeights().get();
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, md->getIndicesCount() * sizeof(unsigned int), md->getIndices().get(), GL_STATIC_DRAW);
@@ -160,6 +180,15 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, normalsVBO);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, jointIDsVBO);
+	// yay new funtion version
+	glVertexAttribIPointer(3, 3, GL_INT, 3 * sizeof(uint32_t), (void*)0);
+	glEnableVertexAttribArray(3);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vertexWeigthsVBO);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(4);
 
 	unsigned int modelDiffuse = loadTexture(R"(AnimationOpenGL/res/models/cowboy/diffuse.png)");
 
