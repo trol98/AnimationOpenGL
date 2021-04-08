@@ -1,7 +1,4 @@
-#pragma once
 #include "Joint.h"
-#include <iostream>
-#include "MatrixUtils.h"
 
 
 Joint::Joint(int index, const std::string& name, const glm::mat4& localBindTransform)
@@ -39,15 +36,6 @@ void Joint::calcInverseBindTransform(const glm::mat4& parentBindTransform)
 	//MatrixUtils::invert(glm::transpose(bindTransform), m_inverseBindTransform);
 	//MatrixUtils::invert(bindTransform, m_inverseBindTransform);
 	//m_inverseBindTransform = glm::mat4(1.0f);
-	
-	std::cout << std::string(50, '-') << std::endl;
-	std::cout << "ParentBindTransform" << std::endl;
-	MatrixUtils::debugPrintMatrix(parentBindTransform);
-	std::cout << std::string(50, '-') << std::endl;
-	std::cout << std::string(50, '-') << std::endl;
-	std::cout << "LocalBindTransform" << std::endl;
-	MatrixUtils::debugPrintMatrix(m_localBindTransform);
-	std::cout << std::string(50, '-') << std::endl;
 
 	for (Joint* child : Children)
 	{

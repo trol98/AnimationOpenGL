@@ -78,7 +78,7 @@ std::unordered_map<std::string, glm::mat4> Animator::interpolatePoses(KeyFrame* 
 	for (const std::pair<std::string, JointTransform*>& pair : previousFrame->getJointKeyFrames())
 	{
 		JointTransform* previousTransform = pair.second;
-		JointTransform* nextTransform = nextFrame->getJointKeyFrames()[pair.first];
+		JointTransform* nextTransform = nextFrame->getJointKeyFrames().at(pair.first);
 		// TODO: Maybe a small memeory optimization in form of passing an output JointTransform
 		// To the interpolate method
 		JointTransform* currentTransform = JointTransform::interpolate(previousTransform, nextTransform, progression);
