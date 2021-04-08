@@ -3,6 +3,9 @@
 #include "Joint.h"
 #include "Animator.h"
 
+// just for debuging
+//#include <iostream>
+
 AnimatedModel::AnimatedModel(Joint* joint, int jointCount)
 	:m_rootJoint(joint), m_jointCount(jointCount), m_animator(new Animator(this))
 {
@@ -43,8 +46,11 @@ std::vector<glm::mat4> AnimatedModel::getJointTransforms()
 void AnimatedModel::addJointsToArray(const Joint* rootJoint, std::vector<glm::mat4>& jointMatrices)
 {
 	jointMatrices[rootJoint->Index] = rootJoint->getAnimatedTransform();
+	//std::cout << "AnimatedModel.cpp" << std::endl;
+	//std::cout << "Written to the index: " << rootJoint->Index << std::endl;
 	for (const Joint* childJoint : rootJoint->Children)
 	{
 		addJointsToArray(childJoint, jointMatrices);
 	}
 }
+// TODO: Write a destructor for animator

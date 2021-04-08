@@ -20,15 +20,11 @@ void Animator::update(float delta)
 	}
 }
 
-
 void Animator::increaseAnimationTime(float delta)
 {
 	m_currentAnimationTime += delta;
-	if (m_currentAnimationTime > m_currentAnimation->getLength())
-	{
-		// this was originaly %= but c++ doesn't support modulo operator for float's
-		// but for this specific case this workaround should work.
-		m_currentAnimationTime = m_currentAnimationTime - m_currentAnimation->getLength();
+	if (m_currentAnimationTime > m_currentAnimation->getLength()) {
+		m_currentAnimationTime = std::fmod(m_currentAnimationTime, m_currentAnimation->getLength());
 	}
 }
 
@@ -53,7 +49,7 @@ float Animator::calculateProgression(const KeyFrame* previousFrame, const KeyFra
 
 std::vector<KeyFrame*> Animator::getPreviousAndNextFrames()
 {
-	std::vector<KeyFrame*> allFrames = m_currentAnimation->getKeyFrames();
+	std::vector<KeyFrame*> allFrames(m_currentAnimation->getKeyFrames());
 	KeyFrame* previousFrame = allFrames[0];
 	KeyFrame* nextFrame = allFrames[0];
 	for (size_t i = 1; i < allFrames.size(); i++)

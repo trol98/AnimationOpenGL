@@ -6,14 +6,13 @@ JointTransform::JointTransform(glm::vec3 position, glm::quat rotation)
 glm::mat4 JointTransform::getLocalTransform() const
 {
 	glm::mat4 matrix(1.0f);
-	glm::translate(matrix, m_position);
-	return matrix * glm::toMat4(m_rotation);
+	return glm::translate(matrix, m_position) * glm::toMat4(m_rotation);
 }
 
 JointTransform* JointTransform::interpolate(const JointTransform* frameA, const JointTransform* frameB, float progression)
 {
 	glm::vec3 position = interpolate(frameA->m_position, frameB->m_position, progression);
-	glm::quat rotation = glm::lerp(frameA->m_rotation, frameB->m_rotation, progression);
+	glm::quat rotation = glm::lerp(frameA->m_rotation, frameB->m_rotation, progression); 
 	return new JointTransform(position, rotation);
 }
 

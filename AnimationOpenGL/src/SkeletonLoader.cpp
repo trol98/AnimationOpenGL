@@ -38,7 +38,7 @@ JointData* SkeletonLoader::extractMainJointData(const std::shared_ptr<XMLNode>& 
 	glm::mat4 matrix = convertData(matrixData);
 
 	// COLLADA files are row-major and GLSL preffers coloumn-major order
-	matrix = glm::transpose(matrix);
+	//matrix = glm::transpose(matrix);
 
 	if (isRoot)
 	{
@@ -67,7 +67,7 @@ glm::mat4 SkeletonLoader::convertData(const std::vector<std::string>& rawData)
 	{
 		for (int j = 0; j < 4; j++)
 		{
-			output[i][j] = std::stoi(rawData[i * 4 + j]);
+			output[i][j] = std::stof(rawData[i * 4 + j]);
 		}
 	}
 	return output;

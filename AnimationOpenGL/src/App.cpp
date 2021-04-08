@@ -45,6 +45,8 @@ double lastX = SCR_WIDTH / 2.0;
 double lastY = SCR_HEIGHT / 2.0;
 bool firstMouse = true;
 
+float animationStep = 1.0f;
+
 // use F1, F2
 int main()
 {
@@ -87,6 +89,7 @@ int main()
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	
 	glDebugMessageCallback(OpenGLMessageCallback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
@@ -114,9 +117,7 @@ int main()
 	AnimatedModel* animatedModel = AnimatedModelLoader::loadEntity("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 	Animation* animation = AnimationExtracter::loadAnimation("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 	animatedModel->doAnimation(animation);
-	animatedModel->update(0.05f);
 	
-	animatedModel->getJointTransforms();
 	/*std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
 	VAO->Bind();
 
@@ -162,9 +163,6 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexWeigthsVBO);
 	glBufferData(GL_ARRAY_BUFFER, md->getvertexWeightsCount() * sizeof(float), md->getVertexWeights().get(), GL_STATIC_DRAW);
 
-	md->getJointIds().get();
-	md->getVertexWeights().get();
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, md->getIndicesCount() * sizeof(unsigned int), md->getIndices().get(), GL_STATIC_DRAW);
 
@@ -196,6 +194,7 @@ int main()
 	ourShader.setInt("diffuseMap", 0);
 	ourShader.setVec3("lightDirection", glm::vec3(0.2f, -0.3f, -0.8f));
 
+
 	// timing
 	double deltaTime = 0.0f;
 	double lastFrame = 0.0f;
@@ -219,10 +218,20 @@ int main()
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		ourShader.use();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		ourShader.setMat4("projectionViewMatrix", projection * view);
+
+		animatedModel->update(deltaTime * animationStep);
+
+		std::string  jointTransformUniformName = "jointTransforms";
+		std::vector<glm::mat4> jointTransforms(animatedModel->getJointTransforms());
+		for (size_t i = 0; i < jointTransforms.size(); i++)
+		{
+			std::string currentName = jointTransformUniformName + '[' + std::to_string(i) + ']';
+			ourShader.setMat4(currentName, jointTransforms[i]);
+		}
+
 
 		// bind diffuse map
 		glActiveTexture(GL_TEXTURE0);
@@ -283,6 +292,12 @@ void processInput(GLFWwindow* window, double deltaTime)
 		glCullFace(GL_FRONT);
 	if (glfwGetKey(window, GLFW_KEY_F4) == GLFW_PRESS)
 		glCullFace(GL_BACK);
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+		if(animationStep < 1.0)
+			animationStep += 0.01;
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+		if (animationStep > 0.0)
+			animationStep -= 0.01;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

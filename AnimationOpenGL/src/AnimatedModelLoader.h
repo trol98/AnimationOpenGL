@@ -15,10 +15,11 @@ public:
 		// VAO model = createVAO(entityData->getMeshData());
 		// Texture texture = loadTexture(texturePath);
 		const SkeletonData* skeletonData = entityData->getJointsData();
+		int jointCount = skeletonData->jointCount;
 		Joint* headJoint = createJoints(skeletonData->headJoint);
 		delete entityData;
 
-		return new AnimatedModel(headJoint, skeletonData->jointCount);
+		return new AnimatedModel(headJoint, jointCount);
 	}
 private:
 	static Joint* createJoints(const JointData* data)
