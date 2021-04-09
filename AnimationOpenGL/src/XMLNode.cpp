@@ -6,8 +6,6 @@
 #include <vector>
 #include <memory>
 
-
-
 XMLNode::XMLNode(const std::string& name)
 	:m_name(name), m_childNodes(nullptr), m_attributes(nullptr)
 {}
@@ -85,7 +83,6 @@ std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>> XMLNode::getChildren(cons
 		}
 	}
 	return std::make_shared<std::vector<std::shared_ptr<XMLNode>>>();
-	//return std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>();
 }
 
 void XMLNode::addAttribute(const std::string& attrib, const std::string& value)
@@ -113,14 +110,4 @@ void XMLNode::addChild(std::shared_ptr<XMLNode>& child)
 
 	// add child node to map 
 	m_childNodes->at(child->getName())->emplace_back(child);
-}
-
-// DEBUG ONLY
-std::shared_ptr<std::unordered_map<std::string, std::string>>& XMLNode::get_attributes()
-{
-	return m_attributes;
-}
-std::shared_ptr<std::unordered_map<std::string, std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>>>& XMLNode::get_children()
-{
-	return m_childNodes;
 }

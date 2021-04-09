@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 #include "SkeletonData.h"
 #include "MeshData.h"
 
@@ -27,5 +27,7 @@ public:
 	{
 		delete m_joints;
 		delete m_mesh;
+		m_joints = nullptr;
+		m_mesh = nullptr;
 	}
 };

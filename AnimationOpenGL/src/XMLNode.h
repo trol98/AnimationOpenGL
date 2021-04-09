@@ -33,9 +33,4 @@ public:
 	void addChild(std::shared_ptr<XMLNode>& child);
 
 	void setData(const std::string& data);
-
-	// FOR DEBUG ONLY
-
-	std::shared_ptr<std::unordered_map<std::string, std::string>>& get_attributes();
-	std::shared_ptr<std::unordered_map<std::string, std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>>>>& get_children();
 };

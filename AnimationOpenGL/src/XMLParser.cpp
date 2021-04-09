@@ -1,7 +1,5 @@
 #include "XMLParser.h"
 
-
-
 #include <list>
 #include <string>
 #include <fstream>
@@ -15,7 +13,6 @@ const std::regex XMLParser::START_TAG(R"(<(.+?)>)");
 const std::regex XMLParser::ATTR_NAME(R"((.+?)=)");
 const std::regex XMLParser::ATTR_VAL(R"(\"(.+?)\")");
 const std::regex XMLParser::CLOSED(R"((</|/>))");
-
 
 std::shared_ptr<XMLNode> XMLParser::loadXMLFile(const std::string& path)
 {
@@ -51,7 +48,6 @@ std::shared_ptr<XMLNode> XMLParser::loadNode(std::ifstream& file)
 	std::getline(file, line);
 	line = StringUtils::trim(line);
 	
-
 	if (line.rfind(R"(</)", 0) == 0) 
 	{
 		return std::shared_ptr<XMLNode>(nullptr);
@@ -61,8 +57,6 @@ std::shared_ptr<XMLNode> XMLParser::loadNode(std::ifstream& file)
 	std::vector<std::string> startTagParts = StringUtils::split(getStartTag(line), ' ');
 
 	std::shared_ptr<XMLNode> node = std::make_shared<XMLNode>(StringUtils::remove(startTagParts[0], '/'));
-	
-	//std::cout << node->getName() << std::endl; // ONLY FOR DEBUGGING
 
 	addAttributes(startTagParts, node);
 	addData(line, node);
@@ -103,16 +97,16 @@ void XMLParser::addAttributes(const std::vector<std::string>& titleParts, std::s
 			}
 	}
 }
-void XMLParser::addAttribute(const std::string& attributeLine, std::shared_ptr<XMLNode>& node)
-{
-	// NOTE: This method is currently not used anywhere
-	std::smatch nameMatch, valMatch;
-
-	std::regex_search(attributeLine, nameMatch, ATTR_NAME);
-	std::regex_search(attributeLine, valMatch, ATTR_VAL);
-		
-	node->addAttribute(nameMatch.str(1), valMatch.str(1));
-}
+//void XMLParser::addAttribute(const std::string& attributeLine, std::shared_ptr<XMLNode>& node)
+//{
+//	// NOTE: This method is currently not used anywhere
+//	std::smatch nameMatch, valMatch;
+//
+//	std::regex_search(attributeLine, nameMatch, ATTR_NAME);
+//	std::regex_search(attributeLine, valMatch, ATTR_VAL);
+//		
+//	node->addAttribute(nameMatch.str(1), valMatch.str(1));
+//}
 
 std::string XMLParser::getStartTag(const std::string& line)
 {

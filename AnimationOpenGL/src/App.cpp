@@ -12,15 +12,13 @@
 #include <ctime>
 #include <iostream>
 
-//#include "OpenGLBuffer.h"
-//#include "OpenGLBufferLayout.h"
-//#include "OpenGLVertexArray.h"
-
 #include "ColladaLoader.h"
 #include "AnimatedModel.h"
 #include "Animation.h"
 #include "AnimatedModelLoader.h"
 #include "AnimationExtracter.h"
+#include "XMLNode.h"
+#include "XMLParser.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -98,7 +96,7 @@ int main()
 
 	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
 
-	//std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+	
 
 
 	//TODO: Check if XMLNode does need copy/move constructor/=operator
@@ -109,13 +107,12 @@ int main()
 	//MeshData* md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(999999)).extractModelData();
 	//std::cout << "MeshData count in App.cpp " << md->getVertexCount() << std::endl;
 
-	AnimatedModelData* amd = ColladaLoader::loadColladaModel("AnimationOpenGL/res/models/cowboy/cowboy.dae", 3);
+	std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+	AnimatedModelData* amd = ColladaLoader::loadColladaModel(root, 3);
 	const MeshData* md = amd->getMeshData();
-
-	AnimationData* am = ColladaLoader::loadColladaAnimation("AnimationOpenGL/res/models/cowboy/cowboy.dae");
-	
-	AnimatedModel* animatedModel = AnimatedModelLoader::loadEntity("AnimationOpenGL/res/models/cowboy/cowboy.dae");
-	Animation* animation = AnimationExtracter::loadAnimation("AnimationOpenGL/res/models/cowboy/cowboy.dae");
+	AnimationData* am = ColladaLoader::loadColladaAnimation(root);
+	AnimatedModel* animatedModel = AnimatedModelLoader::loadEntity(amd);
+	Animation* animation = AnimationExtracter::loadAnimation(am);
 	animatedModel->doAnimation(animation);
 	
 	/*std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
@@ -166,6 +163,7 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, md->getIndicesCount() * sizeof(unsigned int), md->getIndices().get(), GL_STATIC_DRAW);
 
+	
 
 	glBindBuffer(GL_ARRAY_BUFFER, vertexVBO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -199,6 +197,7 @@ int main()
 	double deltaTime = 0.0f;
 	double lastFrame = 0.0f;
 
+	// TODO: Can you delete all the resources like normals, verices, texureCoords ... after loading them to OpenGL
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -231,7 +230,6 @@ int main()
 			std::string currentName = jointTransformUniformName + '[' + std::to_string(i) + ']';
 			ourShader.setMat4(currentName, jointTransforms[i]);
 		}
-
 
 		// bind diffuse map
 		glActiveTexture(GL_TEXTURE0);
@@ -293,11 +291,21 @@ void processInput(GLFWwindow* window, double deltaTime)
 	if (glfwGetKey(window, GLFW_KEY_F4) == GLFW_PRESS)
 		glCullFace(GL_BACK);
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		if(animationStep < 1.0)
-			animationStep += 0.01;
+	{
+		animationStep += 0.01f;
+		if (animationStep > 1.0f)
+		{
+			animationStep = 1.0f;
+		}
+	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		if (animationStep > 0.0)
-			animationStep -= 0.01;
+	{
+		animationStep -= 0.01f;
+		if (animationStep < 0.0f)
+		{
+			animationStep = 0.0f;
+		}
+	}
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

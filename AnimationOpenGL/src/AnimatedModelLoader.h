@@ -9,15 +9,14 @@
 class AnimatedModelLoader
 {
 public:
-	static AnimatedModel* loadEntity(const std::string& path)
+	static AnimatedModel* loadEntity(const AnimatedModelData* entityData)
 	{
-		AnimatedModelData* entityData = ColladaLoader::loadColladaModel(path, 3);
+		//AnimatedModelData* entityData = ColladaLoader::loadColladaModel(path, 3);
 		// VAO model = createVAO(entityData->getMeshData());
 		// Texture texture = loadTexture(texturePath);
 		const SkeletonData* skeletonData = entityData->getJointsData();
 		int jointCount = skeletonData->jointCount;
 		Joint* headJoint = createJoints(skeletonData->headJoint);
-		delete entityData;
 
 		return new AnimatedModel(headJoint, jointCount);
 	}

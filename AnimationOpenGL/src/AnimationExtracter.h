@@ -19,9 +19,9 @@
 class AnimationExtracter
 {
 public:
-	static Animation* loadAnimation(const std::string& path)
+	static Animation* loadAnimation(const AnimationData* animationData)
 	{
-		AnimationData* animationData = ColladaLoader::loadColladaAnimation(path);
+		//AnimationData* animationData = ColladaLoader::loadColladaAnimation(path);
 
 		float lengthSeconds = animationData->lengthSeconds;
 		std::vector<KeyFrame*> frames(animationData->keyFrames.size());
@@ -29,8 +29,6 @@ public:
 		{
 			frames[i] = createKeyFrame(animationData->keyFrames[i]);
 		}
-		
-		delete animationData;
 		return new Animation(lengthSeconds, frames);
 	}
 private:
