@@ -10,6 +10,12 @@ AnimatedModel::AnimatedModel(Joint* joint, int jointCount)
 	m_rootJoint->calcInverseBindTransform(glm::mat4(1.0f));
 }
 
+AnimatedModel::~AnimatedModel()
+{
+	delete m_animator;
+	delete m_rootJoint;
+}
+
 unsigned int AnimatedModel::getModel()
 {
 	return -1;

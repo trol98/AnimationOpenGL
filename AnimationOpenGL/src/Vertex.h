@@ -47,7 +47,4 @@ public:
 
 	std::shared_ptr<Vertex> getDuplicateVertex() const;
 	void setDuplicateVertex(const std::shared_ptr<Vertex>& duplicateVertex);
-
-
-	void debugPrint();
 };

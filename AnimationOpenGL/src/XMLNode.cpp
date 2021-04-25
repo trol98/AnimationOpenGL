@@ -79,7 +79,7 @@ std::shared_ptr<std::vector<std::shared_ptr<XMLNode>>> XMLNode::getChildren(cons
 	{
 		if (!(m_childNodes->at(name)->empty()))
 		{
-			return m_childNodes->at(name);
+			return (m_childNodes->at(name));
 		}
 	}
 	return std::make_shared<std::vector<std::shared_ptr<XMLNode>>>();

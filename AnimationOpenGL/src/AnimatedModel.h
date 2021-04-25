@@ -15,6 +15,7 @@ private:
 	Animator* m_animator;
 public:
 	AnimatedModel(Joint* joint, int jointCount);
+	~AnimatedModel();
 
 	unsigned int getModel();
 	unsigned int getTexture();

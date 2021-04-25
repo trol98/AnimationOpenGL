@@ -30,12 +30,6 @@ void Joint::calcInverseBindTransform(const glm::mat4& parentBindTransform)
 {
 	glm::mat4 bindTransform = parentBindTransform * m_localBindTransform;
 	m_inverseBindTransform = glm::inverse(bindTransform);
-	//bindTransform = glm::transpose(bindTransform);
-	//m_inverseBindTransform = glm::inverse(glm::transpose(bindTransform));
-	//m_inverseBindTransform = bindTransform;
-	//MatrixUtils::invert(glm::transpose(bindTransform), m_inverseBindTransform);
-	//MatrixUtils::invert(bindTransform, m_inverseBindTransform);
-	//m_inverseBindTransform = glm::mat4(1.0f);
 
 	for (Joint* child : Children)
 	{

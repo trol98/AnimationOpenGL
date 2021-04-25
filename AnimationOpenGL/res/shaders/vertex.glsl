@@ -41,10 +41,8 @@ void main()
 	// JUST A BLANK SCREEN
 	
 	gl_Position = projectionViewMatrix * totalLocalPos;
-	//gl_Position = projectionViewMatrix * vec4(in_position.xyz, 1.0);
 
 	pass_normal = totalNormal.xyz;
-	//pass_normal = in_normal;
 
 	pass_textureCoords = in_textureCoords;
 }

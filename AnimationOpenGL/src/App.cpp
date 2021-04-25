@@ -9,7 +9,6 @@
 #include "Shader.h"
 #include "Camera.h"
 
-#include <ctime>
 #include <iostream>
 
 #include "ColladaLoader.h"
@@ -38,7 +37,7 @@ constexpr unsigned SCR_WIDTH = 1920;
 constexpr unsigned SCR_HEIGHT = 1440;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
+Camera camera(glm::vec3(-8.0f, 7.0f,11.0f));
 double lastX = SCR_WIDTH / 2.0;
 double lastY = SCR_HEIGHT / 2.0;
 bool firstMouse = true;
@@ -48,7 +47,6 @@ float animationStep = 1.0f;
 // use F1, F2
 int main()
 {
-	std::srand(time(nullptr));
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
@@ -59,10 +57,10 @@ int main()
 
 	// glfw window creation
 	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OpenGLAnimation", nullptr, nullptr);
 	if (window == nullptr)
 	{
-		std::cout << "Failed to create GLFW window" << std::endl;
+		std::puts("Failed to create GLFW window");
 		glfwTerminate();
 		return -1;
 	}
@@ -75,15 +73,11 @@ int main()
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-
-
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::puts("Failed to initialize GLAD");
 		return -1;
 	}
-
-
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -96,42 +90,18 @@ int main()
 
 	Shader ourShader("AnimationOpenGL/res/shaders/vertex.glsl", "AnimationOpenGL/res/shaders/fragment.glsl");
 
-	
-
-
 	//TODO: Check if XMLNode does need copy/move constructor/=operator
 	//TODO: Change to std::vector<XMLNode*>*
-
-
-
-	//MeshData* md = GeometryLoader(root->getChild("library_geometries"), std::vector<VertexSkinData>(999999)).extractModelData();
-	//std::cout << "MeshData count in App.cpp " << md->getVertexCount() << std::endl;
 
 	std::shared_ptr<XMLNode> root = XMLParser::loadXMLFile("AnimationOpenGL/res/models/cowboy/cowboy.dae");
 	AnimatedModelData* amd = ColladaLoader::loadColladaModel(root, 3);
 	const MeshData* md = amd->getMeshData();
+	const unsigned indiciesCount = md->getIndicesCount();
 	AnimationData* am = ColladaLoader::loadColladaAnimation(root);
+	root = nullptr;
 	AnimatedModel* animatedModel = AnimatedModelLoader::loadEntity(amd);
 	Animation* animation = AnimationExtracter::loadAnimation(am);
 	animatedModel->doAnimation(animation);
-	
-	/*std::shared_ptr < OpenGLVertexArray> VAO = std::make_shared<OpenGLVertexArray>();
-	VAO->Bind();
-
-	OpenGLBufferLayout layout{ {ShaderDataType::Float3, "in_position"},
-							   {ShaderDataType::Float2, "in_textureCoords"},
-							   {ShaderDataType::Float3, "in_normal"}};
-
-	std::shared_ptr<OpenGLVertexBuffer> VBO = std::make_shared<OpenGLVertexBuffer>(md.getVertices().get(), md.getVertexCount() * 3 * sizeof(float));
-	VBO->SetLayout(layout);
-	std::shared_ptr <OpenGLIndexBuffer> EBO = std::make_shared<OpenGLIndexBuffer>(md.getIndices().get(), md.getVertexCount());
-
-	VAO->AddVertexBuffer(VBO);
-	VAO->SetIndexBuffer(EBO);
-	VAO->
-
-	VAO->Unbind();
-	*/
 
 	unsigned vertexVBO, textureCoordsVBO, normalsVBO, jointIDsVBO, vertexWeigthsVBO, EBO, VAO;
 
@@ -186,6 +156,10 @@ int main()
 	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(4);
 
+	delete am;
+	delete amd;
+	md = nullptr;
+
 	unsigned int modelDiffuse = loadTexture(R"(AnimationOpenGL/res/models/cowboy/diffuse.png)");
 
 	ourShader.use();
@@ -197,7 +171,6 @@ int main()
 	double deltaTime = 0.0f;
 	double lastFrame = 0.0f;
 
-	// TODO: Can you delete all the resources like normals, verices, texureCoords ... after loading them to OpenGL
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -235,9 +208,9 @@ int main()
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, modelDiffuse);
 
-		//VAO->Bind();
+		//VAOC->Bind();
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, md->getIndicesCount(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, indiciesCount, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -246,9 +219,8 @@ int main()
 	// optional: de-allocate all resources once they've outlived their purpose:
 	// ------------------------------------------------------------------------
 	
-	delete am;
-	delete amd;
-
+	delete animatedModel; 
+	delete animation;
 	glDeleteBuffers(1, &vertexVBO);
 	glDeleteBuffers(1, &textureCoordsVBO);
 	glDeleteBuffers(1, &normalsVBO);

@@ -90,14 +90,3 @@ void Vertex::setDuplicateVertex(const std::shared_ptr<Vertex>& duplicateVertex)
 {
 	m_duplicateVertex = duplicateVertex;
 }
-
-void Vertex::debugPrint()
-{
-	std::cout << "{" << m_position.x << ", " << m_position.y << ", " << m_position.z << "}\n";
-
-	std::cout << "IndexT: " << m_textureIndex << "\n";
-	std::cout << "IndexN: " << m_textureIndex << "\n";
-	std::cout << "Index : " << m_textureIndex << "\n";
-	std::cout << "Length: " << m_textureIndex << "\n";
-	std::cout << "--------------------------------\n";
-}

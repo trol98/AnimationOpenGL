@@ -108,7 +108,6 @@ void GeometryLoader::assembleVertices()
 
 	// typeCount should be equal to 4 becouse
 	// we have an vertex, normal, texture and color index
-	//std::cout << "Type count: " << typeCount << '\n';
 
 	// we only care about vertex, normal, texture index
 	for (size_t i = 0; i < indexData.size() / typeCount; i++) {

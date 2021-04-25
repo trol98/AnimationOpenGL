@@ -1,10 +1,8 @@
 #include "XMLParser.h"
 
-#include <list>
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <algorithm>
 #include <regex>
 #include <sstream>
 
@@ -53,7 +51,6 @@ std::shared_ptr<XMLNode> XMLParser::loadNode(std::ifstream& file)
 		return std::shared_ptr<XMLNode>(nullptr);
 	}
 
-	// spliting by space
 	std::vector<std::string> startTagParts = StringUtils::split(getStartTag(line), ' ');
 
 	std::shared_ptr<XMLNode> node = std::make_shared<XMLNode>(StringUtils::remove(startTagParts[0], '/'));

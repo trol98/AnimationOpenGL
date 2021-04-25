@@ -29,6 +29,7 @@ AnimatedModelData* ColladaLoader::loadColladaModel(const std::shared_ptr<XMLNode
 	MeshData* meshData = geometryLoader->extractModelData();
 	delete geometryLoader;
 	
+	delete skinningData;
 	return new AnimatedModelData(meshData, jointsData);
 }
 
